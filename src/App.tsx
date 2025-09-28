@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { CssBaseline } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useMemo, useState } from 'react';
@@ -20,9 +20,8 @@ export function App() {
     if (token) {
       dispatch(setAuthToken(token));
       try {
-        const decodedUser = jwtDecode<{ name: string; email: string }>(token);
-        console.log(decodedUser);
-        dispatch(setUser({ name: decodedUser.name, email: decodedUser.email }));
+        const decodedUser = jwtDecode<{ id: string; name: string; email: string }>(token);
+        dispatch(setUser({ id: decodedUser.id, name: decodedUser.name, email: decodedUser.email }));
       } catch {
         Cookies.remove('authToken');
         dispatch(resetUser());
@@ -42,7 +41,9 @@ export function App() {
       <CssBaseline />
       <BrowserRouter>
         <Navbar isDark={isDark} onToggleTheme={toggleTheme} />
-        <AppRoutes />
+        <Box sx={{ paddingTop: '64px' }}>
+          <AppRoutes />
+        </Box>
       </BrowserRouter>
     </ThemeProvider>
   );

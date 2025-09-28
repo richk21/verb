@@ -56,7 +56,36 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          MenuListProps={{ 'aria-labelledby': 'profile-button' }}
+          MenuListProps={{
+            'aria-labelledby': 'profile-button',
+            sx: {
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              minWidth: 180,
+              p: 1,
+            },
+          }}
+          sx={{
+            mt: 1,
+            '.MuiMenuItem-root': {
+              fontWeight: '500',
+              color: 'text.primary',
+              transition: 'background-color 0.3s ease',
+              borderRadius: 1,
+              '&:hover': {
+                bgcolor: 'primary.main',
+                color: 'common.white',
+              },
+              '&.Mui-selected': {
+                bgcolor: 'primary.dark',
+                color: 'common.white',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                },
+              },
+            },
+          }}
         >
           <MenuItem onClick={goToProfile}>Profile</MenuItem>
           <MenuItem onClick={logout}>Logout</MenuItem>

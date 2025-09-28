@@ -32,7 +32,7 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const theme = useTheme();
-
+  console.log('User in Navbar:', user);
   const handleLogout = () => {
     Cookies.remove('authToken');
     dispatch(resetUser());
@@ -41,7 +41,7 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       elevation={1}
       sx={{ boxShadow: '0 0 8px rgba(0,0,0,0.2)', padding: '15px' }}
       className="navbar-container"
@@ -88,8 +88,8 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
           {user && (
             <IconButton
               color="inherit"
-              onClick={() => navigate('/post-blog')}
-              className={getIconClass('/post-blog', isDark)}
+              onClick={() => navigate('/blog-post')}
+              className={getIconClass('/blog-post', isDark)}
             >
               <PostAddIcon />
             </IconButton>

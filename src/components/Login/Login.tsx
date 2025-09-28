@@ -3,13 +3,13 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import './login.scss';
 
 import { Button } from '@mui/material';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { LOGIN_SUCCESS_MESSAGE } from '../../app/constants';
 import { UserActions } from '../../redux/user/userActions';
 import { selectUser, selectUserErrorMessage } from '../../redux/user/userSelectors';
 import { Notification } from '../Notification/Notification';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 
 export interface LoginFormInputs {
   email: string;
