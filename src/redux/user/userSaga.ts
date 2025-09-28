@@ -1,4 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios';
+import Cookies from 'js-cookie';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { types } from '../../app/actionTypes';
 import { ILoginRequest } from '../../app/interface/request/loginRequest';
@@ -7,7 +8,6 @@ import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUser } from '../../app/interface/user';
 import { userService } from './userService';
 import { setErrorMessage, setLoading, setUser } from './userSlice';
-import Cookies from 'js-cookie';
 
 export function* signUpUser(action: { type: string; payload: ISignupRequest }) {
   yield put(setLoading(true));

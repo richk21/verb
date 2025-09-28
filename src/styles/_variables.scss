@@ -1,16 +1,19 @@
-// Colors
-$primary: #1976d2;
+// main colors
+$primary: #FF4500;
+$background-color: #f5f5f5;
+
+//blacks and whites
+$grey: #333333;
+$charcoal: #212121;
+$black: #000000;
+$white: #fff;
+
+//warnings and other
 $secondary: #9c27b0;
 $success: #2e7d32; 
 $danger: #d32f2f;
 $warning: #ed6c02;
 $info: #0288d1;
-
-$white: #f5f5f5;
-$primaryPurple: #613470;
-$grey: #333333;
-$charcoal: #212121;
-$black: #000000;
 
 // Typography
 $font-family-base: 'Roboto', sans-serif;

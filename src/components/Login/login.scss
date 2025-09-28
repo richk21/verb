@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+@import '../../styles/variables';
 
 .login-container {
   min-width: 300px;
@@ -16,13 +16,13 @@
 
     .MuiOutlinedInput-root {
     &.Mui-focused fieldset {
-      border-color: $primaryPurple;
+      border-color: $primary;
     }
   }
 
   .MuiInputLabel-root {
     &.Mui-focused {
-      color: $primaryPurple;
+      color: $primary;
     }
   }
 
@@ -40,7 +40,7 @@
       width: 50%;
       min-width: 150px;
       padding: 0.75rem;
-      background: $primaryPurple;
+      background: $primary;
       color: $white;
       border: none;
       border-radius: 25px;

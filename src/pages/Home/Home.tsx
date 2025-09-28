@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { selectIsLoading, selectUser } from '../../redux/user/userSelectors';
 import { Button, CircularProgress } from '@mui/material';
-import { resetAuthToken, resetUser } from '../../redux/user/userSlice';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { selectIsLoading, selectUser } from '../../redux/user/userSelectors';
+import { resetAuthToken, resetUser } from '../../redux/user/userSlice';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,7 @@ export const Home = () => {
   const isUserLoading = useSelector(selectIsLoading);
 
   const handleLogout = () => {
-    Cookies.remove('token');
+    Cookies.remove('authToken');
     dispatch(resetUser());
     dispatch(resetAuthToken());
     navigate('/login');
