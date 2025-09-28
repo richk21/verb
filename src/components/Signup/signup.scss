@@ -15,20 +15,19 @@
     text-align: center;
 
     .MuiOutlinedInput-root {
-    &.Mui-focused fieldset {
-      border-color: $primaryPurple;
+      &.Mui-focused fieldset {
+        border-color: $primaryPurple;
+      }
     }
-  }
 
-  .MuiInputLabel-root {
-    &.Mui-focused {
-      color: $primaryPurple;
+    .MuiInputLabel-root {
+      &.Mui-focused {
+        color: $primaryPurple;
+      }
     }
-  }
-
 
     .password-field,
-    .email-field{
+    .email-field {
       width: 100%;
       border-radius: 8px;
       font-size: 0.95rem;
@@ -48,6 +47,9 @@
       cursor: pointer;
       margin: 20px 0;
       transition: background 0.2s ease;
+      &:disabled {
+        opacity: 0.6;
+      }
 
       &:hover {
         background: $charcoal;
