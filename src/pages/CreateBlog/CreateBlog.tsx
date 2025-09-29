@@ -12,27 +12,46 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { IUnsplashResponse } from '../../app/interface/unsplashResponse';
 import { Notification } from '../../components/Notification/Notification';
+import { BlogActions } from '../../redux/blog/blogActions';
+import { selectBlog } from '../../redux/blog/blogSelectors'; // <--- import your selector
 import { setBlog } from '../../redux/blog/blogSlice';
 import { UNSPLASH_API_URL } from '../../redux/endpoints';
+import { selectUser } from '../../redux/user/userSelectors';
 
 export const CreateBlog = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [title, setTitle] = useState('');
-  const [hashtags, setHashtags] = useState<string[]>([]);
+  const user = useSelector(selectUser);
+
+  // Get any existing blog draft from Redux, or provide default blank state
+  const blogDraft = useSelector(selectBlog);
+
+  // If values existed in Redux blogDraft, use them for initial state
+  const [coverImage, setCoverImage] = useState<string | null>(blogDraft?.coverImage || null);
+  const [title, setTitle] = useState(blogDraft?.title || '');
+  const [hashtags, setHashtags] = useState<string[]>(blogDraft?.hashtags || []);
   const [hashtagInput, setHashtagInput] = useState('');
-  const [markdownContent, setMarkdownContent] = useState('');
+  const [markdownContent, setMarkdownContent] = useState(blogDraft?.content || '');
   const [openDialog, setOpenDialog] = useState(false);
   const [unsplashImages, setUnsplashImages] = useState<IUnsplashResponse[]>([]);
   const [unsplashError, setUnsplashError] = useState<string>('');
 
-  const fetchRandomImages = async (count: number = 50) => {
+  // If blogDraft changes (on return or mount), update local state to keep in sync
+  useEffect(() => {
+    if (blogDraft) {
+      setTitle(blogDraft.title || '');
+      setCoverImage(blogDraft.coverImage || null);
+      setHashtags(blogDraft.hashtags || []);
+      setMarkdownContent(blogDraft.content || '');
+    }
+  }, [blogDraft]);
+
+  const fetchRandomImages = async (count: number = 52) => {
     try {
       const res = await axios.get(UNSPLASH_API_URL(count, title));
       return res.data;
@@ -65,8 +84,49 @@ export const CreateBlog = () => {
   };
 
   const handlePreviewClick = () => {
-    dispatch(setBlog({ title, hashtags, coverImage, content: markdownContent }));
-    navigate('/blog-preview');
+    // Store the latest form state in Redux so preview and navigation back work!
+    dispatch(
+      setBlog({
+        title,
+        hashtags,
+        coverImage,
+        content: markdownContent,
+        authorId: user?.id || '',
+        authorName: user?.name || '',
+        createdAt: new Date().toISOString(),
+      })
+    );
+    navigate('/blog-preview', { replace: false });
+  };
+
+  const handlePublish = () => {
+    dispatch(
+      BlogActions.BlogPublish({
+        authorId: user?.id || '',
+        authorName: user?.name || '',
+        content: markdownContent,
+        coverImage: coverImage || '',
+        createdAt: new Date().toISOString(),
+        hashtags,
+        isDraft: false,
+        title: title,
+      })
+    );
+  };
+
+  const handleSave = () => {
+    dispatch(
+      BlogActions.BlogSaveAsDraft({
+        authorId: user?.id || '',
+        authorName: user?.name || '',
+        content: markdownContent,
+        coverImage: coverImage || '',
+        createdAt: new Date().toISOString(),
+        hashtags,
+        isDraft: true,
+        title: title,
+      })
+    );
   };
 
   return (
@@ -223,13 +283,10 @@ export const CreateBlog = () => {
                 color: palette.primary.main,
               },
             })}
-            onClick={() => {
-              handlePreviewClick();
-            }}
+            onClick={handlePreviewClick}
           >
             Preview
           </Button>
-
           <Button
             variant="outlined"
             sx={({ palette }) => ({
@@ -241,10 +298,10 @@ export const CreateBlog = () => {
                 color: palette.primary.main,
               },
             })}
+            onClick={handleSave}
           >
             Save as Draft
           </Button>
-
           <Button
             variant="contained"
             color="primary"
@@ -257,6 +314,7 @@ export const CreateBlog = () => {
                 color: palette.primary.main,
               },
             })}
+            onClick={handlePublish}
           >
             Publish
           </Button>

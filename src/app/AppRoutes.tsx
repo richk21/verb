@@ -5,11 +5,13 @@ import { CreateBlog } from '../pages/CreateBlog/CreateBlog';
 import { Home } from '../pages/Home/Home';
 import { LoginAndSignUp } from '../pages/LoginAndSignupPage/LoginAndSignUp';
 import { PreviewBlog } from '../pages/PreviewBlog/PreviewBlog';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/blog-post" element={<CreateBlog />} />
       <Route path="/blog-preview" element={<PreviewBlog />} />
       <Route element={<LoginAndSignUp />}>

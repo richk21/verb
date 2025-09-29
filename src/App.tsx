@@ -41,7 +41,7 @@ export function App() {
       <CssBaseline />
       <BrowserRouter>
         <Navbar isDark={isDark} onToggleTheme={toggleTheme} />
-        <Box sx={{ paddingTop: '64px' }}>
+        <Box sx={{ paddingTop: '70px' }}>
           <AppRoutes />
         </Box>
       </BrowserRouter>
