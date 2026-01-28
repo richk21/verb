@@ -22,6 +22,17 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
       setAnchorEl(event.currentTarget);
     }
     navigate('/login');
+    if (user) {
+      setAnchorEl(event.currentTarget);
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    if (user) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
@@ -46,6 +57,7 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
         aria-controls={open ? 'profile-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
+        onMouseEnter={handleOpenMenu}
         className={getIconClass('/profile', isDark)}
       >
         <PersonIcon />
@@ -57,13 +69,15 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
           open={open}
           onClose={handleClose}
           MenuListProps={{
+            onMouseEnter: () => {},
+            onMouseLeave: handleClose,
             'aria-labelledby': 'profile-button',
             sx: {
               bgcolor: 'background.paper',
-              borderRadius: 2,
+              borderRadius: 1,
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               minWidth: 180,
-              p: 1,
+              m: 0,
             },
           }}
           sx={{
@@ -72,10 +86,9 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
               fontWeight: '500',
               color: 'text.primary',
               transition: 'background-color 0.3s ease',
-              borderRadius: 1,
               '&:hover': {
                 bgcolor: 'primary.main',
-                color: 'common.white',
+                color: 'primary.contrastText',
               },
               '&.Mui-selected': {
                 bgcolor: 'primary.dark',

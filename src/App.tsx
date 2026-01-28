@@ -1,39 +1,30 @@
 import { ThemeProvider } from '@emotion/react';
 import { Box, CssBaseline } from '@mui/material';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
-import { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import { AppRoutes } from './app/AppRoutes';
 import { darkTheme, lightTheme } from './app/theme';
 import { Navbar } from './components/Navbar/Navbar';
-import { resetAuthToken, resetUser, setAuthToken, setUser } from './redux/user/userSlice';
 
 export function App() {
-  const dispatch = useDispatch();
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get('authToken');
-    if (token) {
-      dispatch(setAuthToken(token));
-      try {
-        const decodedUser = jwtDecode<{ id: string; name: string; email: string }>(token);
-        dispatch(setUser({ id: decodedUser.id, name: decodedUser.name, email: decodedUser.email }));
-      } catch {
-        Cookies.remove('authToken');
-        dispatch(resetUser());
-        dispatch(resetAuthToken());
-      }
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('verb_theme');
+    if (!saved) {
+      localStorage.setItem('verb_theme', 'l');
+      return false;
     }
-  }, [dispatch]);
+    return saved === 'd';
+  });
 
   const theme = useMemo(() => (isDark ? darkTheme : lightTheme), [isDark]);
 
   const toggleTheme = () => {
-    setIsDark((prev) => !prev);
+    setIsDark((prev) => {
+      const newTheme = !prev;
+      localStorage.setItem('verb_theme', newTheme ? 'd' : 'l');
+      return newTheme;
+    });
   };
 
   return (

@@ -6,7 +6,6 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: $white;
 
   .signup-box {
     width: 70%;
@@ -24,15 +23,6 @@
       &.Mui-focused {
         color: $primary;
       }
-    }
-
-    .password-field,
-    .email-field {
-      width: 100%;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      transition: border 0.2s ease;
-      min-width: 150px;
     }
 
     .signup-button {

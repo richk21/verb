@@ -1,4 +1,5 @@
 export interface IBlog {
+    id: string;
     title: string;
     hashtags: string[];
     coverImage: string | null;
@@ -6,4 +7,5 @@ export interface IBlog {
     authorId: string;
     authorName: string;
     createdAt: string;
+    isDraft: boolean;
 }

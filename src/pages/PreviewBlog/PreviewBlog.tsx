@@ -2,11 +2,15 @@ import { ArrowBack } from '@mui/icons-material';
 import { Box, Chip, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BlogActions } from '../../redux/blog/blogActions';
 import { selectBlog } from '../../redux/blog/blogSelectors';
+import { resetBlog } from '../../redux/blog/blogSlice';
 
-export const PreviewBlog = () => {
+export const BlogView = () => {
+  const dispatch = useDispatch();
+  const blogId = useParams().id || '';
   const theme = useTheme();
   const blog = useSelector(selectBlog);
   const navigate = useNavigate();
@@ -17,6 +21,20 @@ export const PreviewBlog = () => {
   const [markdownContent, setMarkdownContent] = useState('');
   const [user, setUser] = useState('');
   const [date, setDate] = useState('');
+  const [isViewMode, setIsViewMode] = useState(false);
+
+  useEffect(() => {
+    if (blogId) {
+      setIsViewMode(true);
+      dispatch(BlogActions.getBlogById({ blogId }));
+    }
+  }, [dispatch, blogId]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetBlog());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (blog) {
@@ -41,18 +59,20 @@ export const PreviewBlog = () => {
       }}
     >
       <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
-        <IconButton
-          sx={{
-            position: 'absolute',
-            top: 16,
-            left: -50,
-            zIndex: 2,
-            background: 'rgba(255,255,255,0.7)',
-          }}
-          onClick={() => navigate(-1)}
-        >
-          <ArrowBack sx={{ fontSize: 28 }} />
-        </IconButton>
+        {!isViewMode && (
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: 16,
+              left: -80,
+              zIndex: 2,
+              background: 'rgba(255,255,255,0.7)',
+            }}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBack sx={{ fontSize: 28 }} />
+          </IconButton>
+        )}
 
         {blog?.coverImage && (
           <Box

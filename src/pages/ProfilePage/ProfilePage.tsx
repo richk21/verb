@@ -1,170 +1,180 @@
-import EditIcon from '@mui/icons-material/Edit';
-import { Box, TextField, Typography, useTheme } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import SaveIcon from '@mui/icons-material/Save';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { BlogTileContainer } from '../../components/BlogTileContainer/BlogTileContainer';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { Notification } from '../../components/Notification/Notification';
+import { setAllBlogs, setAllBlogstotalCount } from '../../redux/blog/blogSlice';
+import { UserActions } from '../../redux/user/userActions';
+import {
+  selectIsLoading,
+  selectUser,
+  selectUserSuccessMessage,
+} from '../../redux/user/userSelectors';
+import { setSuccessMessage } from '../../redux/user/userSlice';
+import { CoverImage } from './CoverImage';
+import { ProfileImage } from './ProfileImage';
 
 const ProfilePage = () => {
-  const theme = useTheme();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const isLoading = useSelector(selectIsLoading);
+  const successMessage = useSelector(selectUserSuccessMessage);
+
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [name, setName] = useState('John Doe');
-  const [bio, setBio] = useState('This is my bio. I love coding and blogging.');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
 
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const profileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    setValue,
+    watch,
+    reset,
+    formState: { isDirty },
+  } = useForm({
+    defaultValues: {
+      userName: '',
+      userBio: '',
+    },
+  });
 
-  const onCoverUploadClick = () => coverInputRef.current?.click();
-  const onProfileUploadClick = () => profileInputRef.current?.click();
+  const watchName = watch('userName');
+  const watchBio = watch('userBio');
 
-  const handleImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    setImage: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImage(url);
-    }
+  const isImageChanged = profileImage !== user?.profileImage || coverImage !== user?.coverImage;
+
+  const isFieldUpdated = isDirty || isImageChanged;
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    file && setCoverImage(URL.createObjectURL(file));
+  };
+  const handleCoverFileSelected = (file: File) => {
+    setCoverFile(file);
   };
 
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    file && setProfileImage(URL.createObjectURL(file));
+  };
+  const handleProfileFileSelected = (file: File) => {
+    setProfileFile(file);
+  };
+
+  useEffect(() => {
+    if (user) {
+      setValue('userName', user.name || '');
+      setValue('userBio', user.bio || '');
+      setProfileImage(user.profileImage || null);
+      setCoverImage(user.coverImage || null);
+    }
+  }, [user, setValue]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setAllBlogs([]));
+      dispatch(setAllBlogstotalCount(0));
+    };
+  }, [dispatch]);
+
+  const updateUserInfo = () => {
+    const formData = new FormData();
+    formData.append('userId', user?.id || '');
+    formData.append('userName', watchName);
+    formData.append('userBio', watchBio);
+    if (coverFile) formData.append('userCoverImage', coverFile);
+    if (profileFile) formData.append('userProfileImage', profileFile);
+    dispatch(UserActions.UpdateUserInfo(formData));
+  };
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        userName: user.name || '',
+        userBio: user.bio || '',
+      });
+
+      // clear file objects
+      setCoverFile(user.coverImage ? null : coverFile);
+      setProfileFile(user.profileImage ? null : profileFile);
+    }
+  }, [user]);
+
+  const coverSection = useMemo(
+    () => (
+      <CoverImage
+        coverImage={coverImage}
+        handleImageChange={handleCoverChange}
+        onFileSelected={handleCoverFileSelected}
+      />
+    ),
+    [coverImage]
+  );
+
+  const profileSection = useMemo(
+    () => (
+      <ProfileImage
+        profileImage={profileImage}
+        handleImageChange={handleProfileChange}
+        onFileSelected={handleProfileFileSelected}
+      />
+    ),
+    [profileImage]
+  );
+
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6, mb: 6 }}>
-      <Box
-        sx={{
-          position: 'relative',
-          height: 300,
-          bgcolor: theme.palette.grey[600],
-          borderRadius: 2,
-          overflow: 'hidden',
-          mb: 8,
-          boxShadow: theme.shadows[4],
-        }}
-      >
-        {coverImage && (
-          <Box
-            component="img"
-            src={coverImage}
-            alt="Cover Image"
-            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        )}
+    <>
+      {isLoading && <LoadingOverlay />}
+      <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6, mb: 6 }}>
+        {coverSection}
+        {profileSection}
 
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            bgcolor: 'rgba(0,0,0,0.4)',
-            color: '#fff',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            cursor: 'pointer',
-            opacity: 0,
-            transition: 'opacity 0.3s',
-            '&:hover': { opacity: 1 },
-            borderBottomLeftRadius: 8,
-          }}
-          onClick={onCoverUploadClick}
-          title="Edit Cover Image"
-        >
-          <EditIcon sx={{ position: 'absolute', right: 20, top: 20 }} />
+        <Box sx={{ px: 2, mb: 4 }}>
+          <TextField
+            label="Name"
+            fullWidth
+            value={watchName}
+            sx={{ mb: 3 }}
+            {...register('userName')}
+          />
+          <TextField
+            label="Bio"
+            fullWidth
+            multiline
+            minRows={4}
+            value={watchBio}
+            {...register('userBio')}
+          />
         </Box>
 
-        {/* Hidden file input */}
-        <input
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={coverInputRef}
-          onChange={(e) => handleImageChange(e, setCoverImage)}
-        />
-      </Box>
-      {/* Profile picture container */}
-      <Box
-        sx={{
-          position: 'relative',
-          width: 250,
-          height: 250,
-          borderRadius: '50%',
-          bgcolor: theme.palette.grey[500],
-          overflow: 'hidden',
-          mx: 'auto',
-          mb: 3,
-          mt: -30,
-          boxShadow: theme.shadows[4],
-        }}
-      >
-        {profileImage && (
-          <Box
-            component="img"
-            src={profileImage}
-            alt="Profile Picture"
-            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        )}
-
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            bgcolor: 'rgba(0,0,0,0.4)',
-            color: '#fff',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: 0,
-            cursor: 'pointer',
-            transition: 'opacity 0.3s',
-            '&:hover': { opacity: 1 },
-          }}
-          onClick={onProfileUploadClick}
-          title="Edit Profile Picture"
-        >
-          <EditIcon sx={{ fontSize: 30 }} />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 4 }}>
+          <Button
+            variant="contained"
+            onClick={updateUserInfo}
+            startIcon={<SaveIcon />}
+            disabled={!isFieldUpdated}
+          >
+            Save
+          </Button>
         </Box>
 
-        {/* Hidden file input */}
-        <input
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={profileInputRef}
-          onChange={(e) => handleImageChange(e, setProfileImage)}
-        />
+        <Box sx={{ mt: 6 }}>
+          <Typography variant="h5" mb={2}>
+            Your Blogs
+          </Typography>
+          <BlogTileContainer isProfilePage />
+        </Box>
       </Box>
-
-      {/* Profile details */}
-      <Box sx={{ px: 2, mb: 4 }}>
-        <TextField
-          label="Name"
-          fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          sx={{ mb: 3 }}
+      {successMessage && (
+        <Notification
+          onClear={() => dispatch(setSuccessMessage(null))}
+          alertMessage={successMessage}
+          type="success"
         />
-        <TextField
-          label="Bio"
-          fullWidth
-          multiline
-          minRows={4}
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
-      </Box>
-
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h5" mb={2}>
-          Your Blogs
-        </Typography>
-        <BlogTileContainer />
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 

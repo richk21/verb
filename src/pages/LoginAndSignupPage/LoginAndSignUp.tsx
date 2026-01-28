@@ -1,10 +1,10 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { PathEnums } from '../../app/enum/pathEnums';
 import { Tab, Tabs } from '@mui/material';
-import './loginAndSignUp.scss';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { PathEnums } from '../../app/enum/pathEnums';
 import { selectUser } from '../../redux/user/userSelectors';
+import './loginAndSignUp.scss';
 
 export interface LoginFormInputs {
   email: string;

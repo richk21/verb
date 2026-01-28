@@ -7,7 +7,7 @@ import { AppBar, Box, Button, IconButton, InputBase, Toolbar, alpha } from '@mui
 import { useTheme } from '@mui/material/styles';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logoBlack from '../../assets/logos/verb-transparent-black.png';
 import logoWhite from '../../assets/logos/verb-transparent-white.png';
 import { selectUser } from '../../redux/user/userSelectors';
@@ -29,10 +29,11 @@ export const getIconClass = (path: string, isDark: boolean) => {
 };
 export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const isRoot = location.pathname === '/';
   const user = useSelector(selectUser);
   const theme = useTheme();
-  console.log('User in Navbar:', user);
   const handleLogout = () => {
     Cookies.remove('authToken');
     dispatch(resetUser());
@@ -51,28 +52,34 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
           <img className="verb-logo" src={isDark ? logoWhite : logoBlack} />
         </Button>
 
-        <Box
-          sx={{
-            position: 'relative',
-            borderRadius: theme.shape.borderRadius,
-            backgroundColor: alpha(theme.palette.common.white, 0.15),
-            '&:hover': {
-              backgroundColor: alpha(theme.palette.common.white, 0.25),
-            },
-            marginRight: 2,
-            width: '250px',
-            display: 'flex',
-            alignItems: 'center',
-            px: 1,
-          }}
-        >
-          <SearchIcon sx={{ color: 'primary', mr: 1 }} />
-          <InputBase
-            placeholder="Search blogs"
-            inputProps={{ 'aria-label': 'search' }}
-            sx={{ color: 'inherit', width: '100%' }}
-          />
-        </Box>
+        {isRoot && (
+          <Box
+            sx={{
+              position: 'relative',
+              borderRadius: theme.shape.borderRadius,
+              backgroundColor: alpha(theme.palette.common.white, 0.15),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.common.white, 0.25),
+              },
+              marginRight: 2,
+              width: '450px',
+              display: 'flex',
+              alignItems: 'center',
+              px: 1,
+              border: `2px solid ${theme.palette.divider}`,
+              '&:focus-within': {
+                border: `2px solid ${theme.palette.primary.contrastText}`,
+              },
+            }}
+          >
+            <SearchIcon sx={{ color: 'primary', mr: 1 }} />
+            <InputBase
+              placeholder="Search blogs"
+              inputProps={{ 'aria-label': 'search' }}
+              sx={{ color: 'inherit', width: '100%' }}
+            />
+          </Box>
+        )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <IconButton
@@ -83,8 +90,6 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
             <HomeIcon />
           </IconButton>
 
-          <DropdownWithIcon onLogout={handleLogout} isDark={isDark} />
-
           {user && (
             <IconButton
               color="inherit"
@@ -94,6 +99,8 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
               <PostAddIcon />
             </IconButton>
           )}
+
+          <DropdownWithIcon onLogout={handleLogout} isDark={isDark} />
 
           <IconButton
             color="inherit"

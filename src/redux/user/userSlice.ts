@@ -5,14 +5,16 @@ interface UserState {
   user: IUser | null;
   authToken: string | null;
   isLoading: boolean;
-  errorMessage?: string;
+  errorMessage: string | null;
+  successMessage: string | null;
 }
 
 const initialState: UserState = {
   user: null,
   authToken: null,
   isLoading: false,
-  errorMessage: '',
+  errorMessage: null,
+  successMessage: null,
 };
 
 const userSlice = createSlice({
@@ -34,11 +36,14 @@ const userSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    setErrorMessage: (state, action: PayloadAction<string>) => {
+    setErrorMessage: (state, action: PayloadAction<string | null>) => {
       state.errorMessage = action.payload;
+    },
+    setSuccessMessage: (state, action: PayloadAction<string | null>) => {
+      state.successMessage = action.payload;
     },
   },
 });
 
-export const { setUser, resetUser, setLoading, setErrorMessage, setAuthToken, resetAuthToken } = userSlice.actions;
+export const { setUser, resetUser, setLoading, setErrorMessage, setAuthToken, resetAuthToken, setSuccessMessage } = userSlice.actions;
 export const userReducer = userSlice.reducer;

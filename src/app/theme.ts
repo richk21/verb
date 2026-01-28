@@ -46,6 +46,7 @@ export const darkTheme = createTheme({
     },
     text: {
       primary: '#fff',
+      secondary: '#555',
     },
   },
   shape: {

@@ -2,11 +2,13 @@ import TextField from '@mui/material/TextField';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import './signup.scss';
 
-import { Button } from '@mui/material';
+import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Box, Button, IconButton, InputAdornment, useTheme } from '@mui/material';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { USER_CREATED_MESSAGE } from '../../app/constants';
 import { UserActions } from '../../redux/user/userActions';
-import { selectUser, selectUserErrorMessage } from '../../redux/user/userSelectors';
+import { selectUserErrorMessage, selectUserSuccessMessage } from '../../redux/user/userSelectors';
+import { setErrorMessage, setSuccessMessage } from '../../redux/user/userSlice';
 import { Notification } from '../Notification/Notification';
 
 export interface signupFormInputs {
@@ -17,14 +19,18 @@ export interface signupFormInputs {
 
 export function Signup() {
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const signupErrorMessage = useSelector(selectUserErrorMessage);
-  const user = useSelector(selectUser);
+  const signupSuccessMessage = useSelector(selectUserSuccessMessage);
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isValid },
   } = useForm<signupFormInputs>({ mode: 'onChange' });
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit: SubmitHandler<signupFormInputs> = (data) => {
     dispatch(
@@ -35,9 +41,12 @@ export function Signup() {
       })
     );
   };
+  const name = watch('name');
+  const emailId = watch('email');
+  const password = watch('password');
 
   return (
-    <div className="signup-container">
+    <Box className="signup-container" sx={{ backgroundColor: theme.palette.background.paper }}>
       <div className="signup-box">
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
@@ -61,6 +70,29 @@ export function Signup() {
                 message: 'Name can only contain letters',
               },
             })}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setValue('name', '')}
+                      edge="end"
+                      sx={{
+                        visibility: name ? 'visible' : 'hidden',
+                        width: '24px',
+                        marginRight: '1px',
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: theme.palette.text.primary,
+                        },
+                      }}
+                    >
+                      {name && <CancelRounded />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
             error={!!errors.name}
             helperText={errors.name?.message}
           />
@@ -79,11 +111,34 @@ export function Signup() {
             })}
             error={!!errors.email}
             helperText={errors.email?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setValue('email', '')}
+                      edge="end"
+                      sx={{
+                        visibility: emailId ? 'visible' : 'hidden',
+                        width: '24px',
+                        marginRight: '1px',
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: theme.palette.text.primary,
+                        },
+                      }}
+                    >
+                      {emailId && <CancelRounded />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
           <TextField
             className="password-field"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             fullWidth
             margin="normal"
             {...register('password', {
@@ -100,14 +155,64 @@ export function Signup() {
             })}
             error={!!errors.password}
             helperText={errors.password?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
+                      sx={{
+                        visibility: password ? 'visible' : 'hidden',
+                        width: '24px',
+                        marginRight: '10px',
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: theme.palette.text.primary,
+                        },
+                      }}
+                    >
+                      {password && (showPassword ? <VisibilityOff /> : <Visibility />)}
+                    </IconButton>
+                    <IconButton
+                      onClick={() => setValue('password', '')}
+                      edge="end"
+                      sx={{
+                        visibility: password ? 'visible' : 'hidden',
+                        width: '24px',
+                        marginRight: '1px',
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: theme.palette.text.primary,
+                        },
+                      }}
+                    >
+                      {password && <CancelRounded />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
           <Button className="signup-button" type="submit" disabled={!isValid}>
             Sign Up
           </Button>
         </form>
       </div>
-      {signupErrorMessage && <Notification alertMessage={signupErrorMessage} type="error" />}
-      {user && <Notification alertMessage={USER_CREATED_MESSAGE} type="success" />}
-    </div>
+      {signupErrorMessage && (
+        <Notification
+          onClear={() => dispatch(setErrorMessage(null))}
+          alertMessage={signupErrorMessage}
+          type="error"
+        />
+      )}
+      {signupSuccessMessage && (
+        <Notification
+          onClear={() => dispatch(setSuccessMessage(null))}
+          alertMessage={signupSuccessMessage}
+          type="success"
+        />
+      )}
+    </Box>
   );
 }
