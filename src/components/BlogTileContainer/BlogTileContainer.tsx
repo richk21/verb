@@ -11,7 +11,7 @@ interface IBlogTileContainer {
 export const BlogTileContainer = ({ isProfilePage }: IBlogTileContainer) => {
   const dispatch = useDispatch();
   const blogs = useSelector(selectAllBlogs);
-
+  console.log('BlogTileContainer render');
   useEffect(() => {
     if (isProfilePage) {
       dispatch(BlogActions.getAllUserBlogs({ userId: 0 }));

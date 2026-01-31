@@ -1,27 +1,27 @@
-import { ArrowBack } from '@mui/icons-material';
-import { Box, Chip, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
+import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { BlogActions } from '../../redux/blog/blogActions';
+import { selectBlog } from '../../redux/blog/blogSelectors';
 
-interface IPreviewBlog {
-  title?: string;
-  content?: string;
-  hashtags?: string[];
-  coverImage?: string | null;
-  authorName?: string;
-  createdAt?: string;
-  onBackButtonClick?: () => void;
-}
-
-export const PreviewBlog = ({
-  title = '',
-  content = '',
-  hashtags = [],
-  coverImage = '',
-  authorName = '',
-  createdAt = '',
-  onBackButtonClick,
-}: IPreviewBlog) => {
+export const BlogView = () => {
+  const dispatch = useDispatch();
+  const blogId = useParams().id || '';
   const theme = useTheme();
+  const blog = useSelector(selectBlog);
+
+  useEffect(() => {
+    if (blogId) {
+      dispatch(BlogActions.getBlogById({ blogId }));
+    }
+  }, [dispatch, blogId]);
+
+  if (!blog) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <Box
@@ -35,26 +35,13 @@ export const PreviewBlog = ({
       }}
     >
       <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
-        <IconButton
-          sx={{
-            position: 'absolute',
-            top: 16,
-            left: -80,
-            zIndex: 2,
-            background: 'rgba(255,255,255,0.7)',
-          }}
-          onClick={() => onBackButtonClick && onBackButtonClick()}
-        >
-          <ArrowBack sx={{ fontSize: 28 }} />
-        </IconButton>
-
-        {coverImage && (
+        {blog?.coverImage && (
           <Box
             sx={{
               width: '100%',
               height: 300,
               bgcolor: theme.palette.grey[200],
-              backgroundImage: `url(${coverImage})`,
+              backgroundImage: `url(${blog?.coverImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderRadius: 3,
@@ -63,7 +50,7 @@ export const PreviewBlog = ({
         )}
       </Box>
       <Typography variant="h3" fontWeight={700} gutterBottom>
-        {title}
+        {blog?.title}
       </Typography>
       <Box
         sx={{
@@ -76,7 +63,7 @@ export const PreviewBlog = ({
         }}
       >
         <Stack direction="row" spacing={1} mb={3}>
-          {hashtags?.map((tag) => (
+          {blog?.hashtags?.map((tag) => (
             <Chip key={tag} label={`#${tag}`} />
           ))}
         </Stack>
@@ -89,7 +76,7 @@ export const PreviewBlog = ({
             minWidth: 160,
           }}
         >
-          {authorName && (
+          {blog?.authorName && (
             <span
               style={{
                 color: theme.palette.text.secondary,
@@ -98,17 +85,17 @@ export const PreviewBlog = ({
                 lineHeight: 1.3,
               }}
             >
-              By {authorName}
+              By {blog?.authorName}
             </span>
           )}
-          {createdAt && (
+          {blog?.createdAt && (
             <span
               style={{
                 color: theme.palette.text.secondary,
                 fontSize: 13,
               }}
             >
-              {createdAt}
+              {blog?.createdAt}
             </span>
           )}
         </Box>
@@ -132,7 +119,7 @@ export const PreviewBlog = ({
           },
         }}
       >
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <ReactMarkdown>{blog?.content}</ReactMarkdown>
       </Box>
     </Box>
   );

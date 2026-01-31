@@ -1,4 +1,5 @@
 export interface IBlogState{
+    id: string | null;
     title: string;
     hashtags: string[];
     coverImage : string;

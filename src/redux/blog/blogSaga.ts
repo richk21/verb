@@ -14,6 +14,10 @@ export function* saveBlog(action: { type: string; payload: IBlog }) {
     if (response.status == 201) {
       yield put(setBlog(response.data));
       yield put(setErrorMessage(null));
+      if(action.payload.id === null){
+        const request: IRequestBlogById = { blogId: response.data.id };
+        yield call(getBlogById, { type: types.GET_BLOG_BY_ID, payload: request });
+      }
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
