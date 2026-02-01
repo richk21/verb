@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { IBlog } from '../../app/interface/blog';
+import { IBlogDeleteRequest } from '../../app/interface/request/deleteBlogRequest';
+import { IGetAllUserBlogsRequest } from '../../app/interface/request/getAllUserBlogsRequest';
 import { IRequestBlogById } from '../../app/interface/request/requestBlogById';
-import { BLOG_SAVE, GET_ALL_BLOGS, GET_ALL_USER_BLOGS, GET_BLOG_BY_ID } from '../endpoints';
+import { BLOG_SAVE, DELETE_BLOG, GET_ALL_BLOGS, GET_ALL_USER_BLOGS, GET_BLOG_BY_ID } from '../endpoints';
 
 export class blogService {
 
@@ -10,14 +12,17 @@ export class blogService {
     return response;
   };
 
-  static getAllBlogs = async () => {
-    const response = await axios.get(GET_ALL_BLOGS);
+  static getAllBlogs = async (request: {page: number, limit: number}) => {
+    const response = await axios.get(GET_ALL_BLOGS, {
+      params: request
+    });
     return response;
   }
 
-  static getAllUserBlogs = async (request: number) => {
+  static getAllUserBlogs = async (request: IGetAllUserBlogsRequest) => {
+    const {userId, getDrafts, getPublished, page, limit} = request;
     const response = await axios.get(GET_ALL_USER_BLOGS, {
-      params: { userId: request }
+      params: { userId, getDrafts, getPublished, page, limit }
     });
     return response;
   }
@@ -25,6 +30,12 @@ export class blogService {
   static getBlogById = async (request: IRequestBlogById) => {
     const {blogId } = request;
     const response = await axios.get(GET_BLOG_BY_ID(blogId));
+    return response;
+  }
+
+  static deleteBlog = async (request: IBlogDeleteRequest) => {
+    const { blogId } = request;
+    const response = await axios.delete(DELETE_BLOG(blogId));
     return response;
   }
 }

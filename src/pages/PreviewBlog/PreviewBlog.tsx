@@ -1,6 +1,7 @@
 import { ArrowBack } from '@mui/icons-material';
 import { Box, Chip, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
+import { utcToDmy } from '../../app/utils/dateUtcToDmy';
 
 interface IPreviewBlog {
   title?: string;
@@ -8,8 +9,9 @@ interface IPreviewBlog {
   hashtags?: string[];
   coverImage?: string | null;
   authorName?: string;
-  createdAt?: string;
+  createdAt?: Date | null;
   onBackButtonClick?: () => void;
+  userAvatar?: string;
 }
 
 export const PreviewBlog = ({
@@ -18,7 +20,8 @@ export const PreviewBlog = ({
   hashtags = [],
   coverImage = '',
   authorName = '',
-  createdAt = '',
+  createdAt = null,
+  userAvatar = '',
   onBackButtonClick,
 }: IPreviewBlog) => {
   const theme = useTheme();
@@ -80,38 +83,46 @@ export const PreviewBlog = ({
             <Chip key={tag} label={`#${tag}`} />
           ))}
         </Stack>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: { xs: 'flex-start', sm: 'flex-end' },
-            ml: 2,
-            minWidth: 160,
-          }}
-        >
-          {authorName && (
-            <span
-              style={{
-                color: theme.palette.text.secondary,
-                fontWeight: 500,
-                fontSize: 15,
-                lineHeight: 1.3,
-              }}
-            >
-              By {authorName}
-            </span>
-          )}
-          {createdAt && (
-            <span
-              style={{
-                color: theme.palette.text.secondary,
-                fontSize: 13,
-              }}
-            >
-              {createdAt}
-            </span>
-          )}
-        </Box>
+        <Stack direction="row" spacing={1} mb={3} mr={2}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: { xs: 'flex-start', sm: 'flex-end' },
+              ml: 2,
+              minWidth: 160,
+            }}
+          >
+            {authorName && (
+              <span
+                style={{
+                  color: theme.palette.text.secondary,
+                  fontWeight: 500,
+                  fontSize: 15,
+                  lineHeight: 1.3,
+                }}
+              >
+                By {authorName}
+              </span>
+            )}
+            {createdAt && (
+              <span
+                style={{
+                  color: theme.palette.text.secondary,
+                  fontSize: 13,
+                }}
+              >
+                {utcToDmy(createdAt)}
+              </span>
+            )}
+          </Box>
+          <Box
+            component="img"
+            src={userAvatar}
+            alt="Author Avatar"
+            sx={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
+          />
+        </Stack>
       </Box>
       <Box
         sx={{

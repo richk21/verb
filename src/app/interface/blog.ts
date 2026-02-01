@@ -8,4 +8,5 @@ export interface IBlog {
     authorName: string;
     createdAt: string;
     isDraft: boolean;
+    authorAvatar: string;
 }

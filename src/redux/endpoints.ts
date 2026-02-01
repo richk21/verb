@@ -9,5 +9,6 @@ export const UNSPLASH_API_URL = (count: number, title:string): string => `https:
 
 export const BLOG_SAVE = `${BASE_URL}/api/blogs/save`;
 export const GET_ALL_BLOGS = `${BASE_URL}/api/blogs/getAll`;
+export const DELETE_BLOG = (id: string) => `${BASE_URL}/api/blogs/delete/${id}`;
 export const GET_ALL_USER_BLOGS = `${BASE_URL}/api/blogs/getAllUserBlogs`;
 export const GET_BLOG_BY_ID = (id: string )=> `${BASE_URL}/api/blogs/getById/${id}`;

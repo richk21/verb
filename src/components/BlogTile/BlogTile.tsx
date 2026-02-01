@@ -1,3 +1,4 @@
+import TrashIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Box,
@@ -9,10 +10,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../app/utils/formatDate';
 import { BlogActions } from '../../redux/blog/blogActions';
+import { WarningModal } from '../Modal/Modal';
 
 interface BlogTileProps {
   id: string;
@@ -24,6 +27,8 @@ interface BlogTileProps {
   datePublished: string;
   isDraft?: boolean;
   isProfilePage?: boolean;
+  userId: string;
+  userAvatar: string;
 }
 
 export function BlogTile({
@@ -36,15 +41,27 @@ export function BlogTile({
   datePublished,
   isDraft = false,
   isProfilePage = false,
+  userId,
+  userAvatar,
 }: BlogTileProps) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const onEditIconClick = (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation();
-    dispatch(BlogActions.getBlogById({ blogId: id }));
+    dispatch(BlogActions.getCurrentBlogById({ blogId: id }));
     navigate(`../blog-edit/${id}`);
+  };
+
+  const onDeleteIconClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    e.stopPropagation();
+    setOpenDeleteModal(true);
+  };
+
+  const handleDelete = () => {
+    dispatch(BlogActions.blogDelete({ blogId: id, userId }));
   };
 
   const onBlogTitleClick = () => {
@@ -106,15 +123,34 @@ export function BlogTile({
           mb={1}
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            gutterBottom
-            onClick={onBlogTitleClick}
-            sx={{ cursor: 'pointer', ':hover': { textDecoration: 'underline' } }}
+          <Stack
+            direction="row"
+            alignItems="top"
+            spacing={2}
+            display={'flex'}
+            width={'100%'}
+            justifyContent={'space-between'}
           >
-            {title}
-          </Typography>
+            <Typography
+              variant="h6"
+              fontWeight={600}
+              gutterBottom
+              onClick={onBlogTitleClick}
+              sx={{ cursor: 'pointer', ':hover': { textDecoration: 'underline' } }}
+            >
+              {title}
+            </Typography>
+            <Box
+              sx={{
+                fontSize: '0.85rem',
+                color: theme.palette.text.secondary,
+                minWidth: '100px',
+                pt: 1,
+              }}
+            >
+              {date}
+            </Box>
+          </Stack>
           <Stack
             direction="row"
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -151,6 +187,22 @@ export function BlogTile({
                     cursor: 'pointer',
                   }}
                 />
+
+                <TrashIcon
+                  onClick={onDeleteIconClick}
+                  sx={{
+                    color: 'white',
+                    mr: 1,
+                    ml: 2,
+                    mb: 1,
+                    height: 30,
+                    width: 30,
+                    borderRadius: '50%',
+                    background: theme.palette.error.light,
+                    p: 1,
+                    cursor: 'pointer',
+                  }}
+                />
               </>
             )}
           </Stack>
@@ -171,11 +223,19 @@ export function BlogTile({
               />
             ))}
           </Box>
-          <Box
-            sx={{ fontSize: '0.85rem', fontStyle: 'italic', color: theme.palette.text.secondary }}
-          >
-            {author} - {date}
-          </Box>
+          <Stack direction="row" spacing={1} mb={3} sx={{ alignItems: 'center' }}>
+            <Box
+              component="img"
+              src={userAvatar}
+              alt="Author Avatar"
+              sx={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }}
+            />
+            <Box
+              sx={{ fontSize: '0.85rem', fontStyle: 'italic', color: theme.palette.text.secondary }}
+            >
+              {author} {/* - {date} */}
+            </Box>
+          </Stack>
         </Stack>
 
         <Typography
@@ -185,6 +245,16 @@ export function BlogTile({
           {contentExcerpt}
         </Typography>
       </CardContent>
+      {openDeleteModal && (
+        <WarningModal
+          open={openDeleteModal}
+          onClose={() => setOpenDeleteModal(false)}
+          title="Delete Blog"
+          message="Are you sure you want to delete this blog?"
+          onSubmit={handleDelete}
+          submitLabel="Delete"
+        />
+      )}
     </Card>
   );
 }

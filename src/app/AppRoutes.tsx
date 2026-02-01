@@ -5,7 +5,6 @@ import { BlogView } from '../pages/BlogView/BlogView';
 import { CreateOrEditBlog } from '../pages/CreateBlog/CreateBlog';
 import { Home } from '../pages/Home/Home';
 import { LoginAndSignUp } from '../pages/LoginAndSignupPage/LoginAndSignUp';
-import { PreviewBlog } from '../pages/PreviewBlog/PreviewBlog';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 
 export function AppRoutes() {
@@ -15,8 +14,6 @@ export function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/blog-post" element={<CreateOrEditBlog />} />
       <Route path="/blog-edit/:id" element={<CreateOrEditBlog isEditMode />} />
-      <Route path="/preview" element={<PreviewBlog />} />
-      {/* <Route path="/blog-preview/:id" element={<PreviewBlog />} /> */}
       <Route path="/blog/:id" element={<BlogView />} />
       <Route element={<LoginAndSignUp />}>
         <Route path="/login" element={<Login />} />

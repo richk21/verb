@@ -13,15 +13,25 @@ import axios from 'axios';
 import { ClipboardEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { IUnsplashResponse } from '../../app/interface/unsplashResponse';
 import { validateWordCount } from '../../app/utils/validateWordCount';
 import { HashtagsInput } from '../../components/HashtagsInput/HashtagsInput';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { Notification } from '../../components/Notification/Notification';
 import { BlogActions } from '../../redux/blog/blogActions';
-import { selectBlog, selectIsLoading } from '../../redux/blog/blogSelectors';
-import { resetBlog, setBlog } from '../../redux/blog/blogSlice';
+import {
+  selectBlogErrorMessage,
+  selectBlogSuccessMessage,
+  selectCurrentBlog,
+  selectIsLoading,
+} from '../../redux/blog/blogSelectors';
+import {
+  resetCurrentBlog,
+  setBlogSuccessMessage,
+  setCurrentBlog,
+  setErrorMessage,
+} from '../../redux/blog/blogSlice';
 import { UNSPLASH_API_URL } from '../../redux/endpoints';
 import { selectUser } from '../../redux/user/userSelectors';
 import { PreviewBlog } from '../PreviewBlog/PreviewBlog';
@@ -38,15 +48,14 @@ interface ICreateOrEditBlogProps {
 
 export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps) => {
   const blogId = useParams().id || '';
-  // const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
   const theme = useTheme();
-  const blogDraft = useSelector(selectBlog);
+  const blogDraft = useSelector(selectCurrentBlog);
   const user = useSelector(selectUser);
+  const blogSuccessMessage = useSelector(selectBlogSuccessMessage);
+  const blogErrorMessage = useSelector(selectBlogErrorMessage);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const isLoading = useSelector(selectIsLoading);
-  const preserveDraft = location.state?.preserveDraft;
 
   const {
     register,
@@ -77,19 +86,16 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
   const [switchToPreview, setSwitchToPreview] = useState(false);
 
   useEffect(() => {
-    if (isEditMode && blogDraft) {
+    if (isEditMode || blogDraft) {
       reset({
-        title: blogDraft.title || '',
-        hashtags: blogDraft.hashtags || [],
-        contents: blogDraft.content || '',
+        title: blogDraft?.title || '',
+        hashtags: blogDraft?.hashtags || [],
+        contents: blogDraft?.content || '',
       });
-      setCoverImage(blogDraft.coverImage || null);
-    }
-  }, [isEditMode, blogDraft, reset]);
-
-  useEffect(() => {
-    if (!preserveDraft) {
-      dispatch(resetBlog());
+      setCoverImage(blogDraft?.coverImage || null);
+    } else {
+      //todo: change this as this is not reseting when nvigating to create blog from edit blog
+      dispatch(resetCurrentBlog());
       reset({
         title: '',
         hashtags: [],
@@ -97,8 +103,9 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
       });
       setCoverImage(null);
     }
-  }, [blogId, preserveDraft, dispatch, reset]);
+  }, [isEditMode, blogDraft, reset]);
 
+  //todo: move to service layer
   const fetchRandomImages = async (count: number = 52) => {
     try {
       const res = await axios.get(UNSPLASH_API_URL(count, watchedTitle));
@@ -116,7 +123,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
 
   useEffect(() => {
     if (blogId) {
-      dispatch(BlogActions.getBlogById({ blogId }));
+      dispatch(BlogActions.getCurrentBlogById({ blogId }));
     }
   }, [dispatch, blogId]);
 
@@ -127,7 +134,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
 
   const handlePreviewClick = () => {
     dispatch(
-      setBlog({
+      setCurrentBlog({
         id: '0',
         title: watchedTitle,
         hashtags: watchedHashtags,
@@ -137,17 +144,15 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
         authorName: user?.name || '',
         createdAt: new Date().toISOString(),
         isDraft: true,
+        authorAvatar: user?.profileImage || '',
       })
     );
-    /* navigate(blogId ? `/blog-preview/${blogId}` : '/preview', {
-      state: { fromEditor: true },
-    }); */
     setSwitchToPreview(true);
   };
 
   const onPublish = () => {
     dispatch(
-      BlogActions.BlogSave({
+      BlogActions.blogSave({
         id: blogDraft?.id || null,
         authorId: user?.id || '',
         authorName: user?.name || '',
@@ -167,11 +172,12 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
         type: 'manual',
         message: 'Content must be at least 100 words',
       });
+      dispatch(setErrorMessage('Content must be at least 100 words for publishing'));
       return;
     }
 
     dispatch(
-      BlogActions.BlogSave({
+      BlogActions.blogSave({
         id: blogDraft?.id || null,
         authorId: user?.id || '',
         authorName: user?.name || '',
@@ -183,7 +189,6 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
         title: watchedTitle,
       })
     );
-    // navigate(`../blog-edit/${blogDraft?.id || ''}`);
   };
 
   const uploadImageToImgur = async (file: File): Promise<string | null> => {
@@ -247,6 +252,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
       });
     }
   };
+  console.log('avatar in draft: ', blogDraft?.authorAvatar);
 
   return (
     <div>
@@ -257,8 +263,9 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
           hashtags={watchedHashtags}
           coverImage={coverImage}
           authorName={blogId ? blogDraft?.authorName || '' : user?.name || ''}
-          createdAt={new Date().toISOString()}
+          createdAt={new Date()}
           onBackButtonClick={() => setSwitchToPreview(false)}
+          userAvatar={blogId ? blogDraft?.authorAvatar || '' : user?.profileImage || ''}
         />
       ) : (
         <Box
@@ -393,15 +400,28 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
                 </DialogContent>
               </Dialog>
             </Box>
-
-            {unsplashError && (
-              <Notification
-                onClear={() => setUnsplashError(null)}
-                alertMessage={unsplashError}
-                type="error"
-              />
-            )}
           </>
+          {unsplashError && (
+            <Notification
+              onClear={() => setUnsplashError(null)}
+              alertMessage={unsplashError}
+              type="error"
+            />
+          )}
+          {blogSuccessMessage && (
+            <Notification
+              onClear={() => dispatch(setBlogSuccessMessage(null))}
+              alertMessage={blogSuccessMessage}
+              type="success"
+            />
+          )}
+          {blogErrorMessage && (
+            <Notification
+              onClear={() => dispatch(setErrorMessage(null))}
+              alertMessage={blogErrorMessage}
+              type="error"
+            />
+          )}
         </Box>
       )}
     </div>
