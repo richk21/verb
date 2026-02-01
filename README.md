@@ -1,46 +1,113 @@
-# Getting Started with Create React App
+# Verb — Modern Blogging Web App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Verb** is a full-stack blogging platform where users can log in, write blogs in markdown, insert media in the blogs, save drafts, and publish posts with cover images and hashtags.
 
-## Available Scripts
+It’s built to feel like a minimal, distraction-free writing space with a clean reading experience.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* 🔐 User authentication
+* ✍️ Create, edit, and delete blogs
+* 💾 Save blogs as drafts
+* 🌍 Publish blogs for others to read
+* 🖼️ Cover image selection (Unsplash integration)
+* 🏷️ Hashtag support
+* 👤 Author profiles with avatar
+* 👀 Blog preview before publishing
+* 📱 Responsive UI
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧠 Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Frontend
 
-### `npm run build`
+* **React + TypeScript**
+* **Material UI (MUI)**
+* **React Hook Form**
+* **Redux Toolkit**
+* **Axios**
+* **React Markdown**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Other Integrations
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Unsplash API (cover images)
+* Image upload service (for pasted images)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## ⚙️ Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 1️⃣ Clone the repo
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone [https://github.com/your-username/verb.git](https://github.com/richk21/verb)
+cd verb
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+---
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 2️⃣ Frontend Setup
 
-## Learn More
+```bash
+yarn install
+yarn launch
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Runs on: **[http://localhost:3000](http://localhost:3000)**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
+
+### 3️⃣ Backend Setup
+
+navigate to backend repository: https://github.com/richk21/verb-backend repository
+
+Runs on: **[http://localhost:5000](http://localhost:5000)**
+
+---
+
+## 🔑 Environment Variables
+
+### Frontend `.env`
+
+```
+REACT_APP_DB_PASSWORD = your_mongodb_password
+REACT_APP_DB_USERNAME = your_mongodb_username
+REACT_APP_DB_URL = your_mongodb_url
+REACT_APP_BACKEND_URL = http://localhost:5000
+REACT_APP_FRONTEND_URL = http://localhost:3000
+REACT_APP_UNSPLASH_ACCESS_KEY_API = your_api_key
+REACT_APP_IMGBB_API_KEY = your_api_key
+```
+
+---
+
+## 🧩 How It Works
+
+1. Users log in
+2. They can write blogs using markdown
+3. Images can be pasted directly into the editor
+4. Blogs can be saved as drafts or published
+5. Published blogs are available for reading
+
+---
+
+## 🎯 Upcoming Features
+
+* Comments system
+* Likes / claps
+* Rich text editor
+* Blog search & filters
+* Single Sign On Integrations
+Stay tuned!
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome!
+If you’d like to improve Verb, feel free to fork and submit changes.
+
+---
