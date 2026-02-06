@@ -6,9 +6,11 @@ import { IBlog } from '../../app/interface/blog';
 import { IBlogDeleteRequest } from '../../app/interface/request/deleteBlogRequest';
 import { IGetAllUserBlogsRequest } from '../../app/interface/request/getAllUserBlogsRequest';
 import { IRequestBlogById } from '../../app/interface/request/requestBlogById';
+import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
+import { IUnsplashImagesResponse } from '../../app/interface/response/unsplashImagesResponse';
 import { blogService } from './blogService';
-import { setAllBlogs, setAllBlogstotalCount, setBlog, setBlogSuccessMessage, setCurrentBlog, setErrorMessage, setLoading } from './blogSlice';
+import { setAllBlogs, setAllBlogstotalCount, setBlog, setBlogSuccessMessage, setCurrentBlog, setErrorMessage, setLoading, setUnsplashErrorMessage, setUnsplashImages, setUnsplashImagesLoadingState, setUnsplashSuccessMessage } from './blogSlice';
 
 export function* saveBlog(action: { type: string; payload: IBlog }) {
   yield put(setLoading(true));
@@ -116,6 +118,23 @@ export function* deleteBlog(action: { type: string; payload: IBlogDeleteRequest 
   }
 }
 
+export function* fetchImageFromUnsplash(action: { type: string; payload: IUnsplashRequest }) {
+  yield put(setUnsplashImagesLoadingState(true));
+  try {
+    const response: AxiosResponse<IUnsplashImagesResponse | null> = yield call(blogService.FetchImageFromUnsplash, action.payload);
+    if (response.status == 200 && response.data?.images) {
+      yield put(setErrorMessage(null));
+      yield put(setUnsplashImages(response.data?.images));
+      yield put(setUnsplashSuccessMessage('Unsplash images are ready!'));
+    }
+  } catch (error) {
+    const err = error as AxiosError<ErrorResponse>;
+    yield put(setUnsplashErrorMessage(err.response?.data.message || 'Failed to fetch images from Unsplash'));
+  } finally {
+    yield put(setUnsplashImagesLoadingState(false));
+  }
+}
+
 export function* blogSaga() {
   yield takeLatest(types.BLOG_SAVE, saveBlog);
   yield takeLatest(types.GET_ALL_BLOGS, getAllBlogs);
@@ -123,4 +142,5 @@ export function* blogSaga() {
   yield takeLatest(types.GET_CURRENT_BLOG_BY_ID, getCurrentBlogById);
   yield takeLatest(types.GET_BLOG_BY_ID, getBlogById);
   yield takeLatest(types.BLOG_DELETE, deleteBlog);
+  yield takeLatest(types.BLOG_GET_IMAGES_UNSPLASH, fetchImageFromUnsplash);
 }

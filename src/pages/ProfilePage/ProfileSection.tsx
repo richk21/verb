@@ -2,16 +2,20 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Box, Button, TextField } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { IUser } from '../../app/interface/user';
 import { setAllBlogs, setAllBlogstotalCount } from '../../redux/blog/blogSlice';
 import { UserActions } from '../../redux/user/userActions';
-import { selectUser } from '../../redux/user/userSelectors';
 import { CoverImage } from './CoverImage';
 import { ProfileImage } from './ProfileImage';
 
-export const ProfileSection = () => {
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
+interface IProfileSectionProps {
+  user: IUser | null;
+}
+
+export const ProfileSection = ({ user }: IProfileSectionProps) => {
+  const dispatch = useDispatch(); /* 
+  const user = useSelector(selectUser); */
 
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);

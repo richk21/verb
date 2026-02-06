@@ -12,6 +12,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile/:userId" element={<ProfilePage isViewMode />} />
       <Route path="/blog-post" element={<CreateOrEditBlog />} />
       <Route path="/blog-edit/:id" element={<CreateOrEditBlog isEditMode />} />
       <Route path="/blog/:id" element={<BlogView />} />

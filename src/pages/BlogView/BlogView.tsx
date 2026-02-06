@@ -2,7 +2,7 @@ import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { utcToDmy } from '../../app/utils/dateUtcToDmy';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { BlogActions } from '../../redux/blog/blogActions';
@@ -85,7 +85,21 @@ export const BlogView = () => {
                   lineHeight: 1.3,
                 }}
               >
-                By {blog?.authorName}
+                By{' '}
+                <Link to={`/profile/${blog?.authorId}`}>
+                  <Typography
+                    sx={{
+                      display: 'inline',
+                      color: theme.palette.text.secondary,
+                      fontWeight: 500,
+                      fontSize: 15,
+                      lineHeight: 1.3,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {blog?.authorName}
+                  </Typography>
+                </Link>
               </span>
             )}
             {blog?.createdAt && (
@@ -99,12 +113,20 @@ export const BlogView = () => {
               </span>
             )}
           </Box>
-          <Box
-            component="img"
-            src={blog?.authorAvatar}
-            alt="Author Avatar"
-            sx={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
-          />
+          <Link to={`/profile/${blog?.authorId}`}>
+            <Box
+              component="img"
+              src={blog?.authorAvatar}
+              alt="Author Avatar"
+              sx={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                cursor: 'pointer',
+              }}
+            />
+          </Link>
         </Stack>
       </Box>
       <Box

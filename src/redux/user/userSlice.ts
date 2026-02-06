@@ -7,6 +7,7 @@ interface UserState {
   isLoading: boolean;
   errorMessage: string | null;
   successMessage: string | null;
+  viewableUserProfile: IUser | null;
 }
 
 const initialState: UserState = {
@@ -15,6 +16,7 @@ const initialState: UserState = {
   isLoading: false,
   errorMessage: null,
   successMessage: null,
+  viewableUserProfile: null,
 };
 
 const userSlice = createSlice({
@@ -42,8 +44,11 @@ const userSlice = createSlice({
     setSuccessMessage: (state, action: PayloadAction<string | null>) => {
       state.successMessage = action.payload;
     },
+    setViewableUserProfile: (state, action: PayloadAction<IUser | null>) => {
+      state.viewableUserProfile = action.payload;
+    },
   },
 });
 
-export const { setUser, resetUser, setLoading, setErrorMessage, setAuthToken, resetAuthToken, setSuccessMessage } = userSlice.actions;
+export const { setUser, resetUser, setLoading, setErrorMessage, setAuthToken, resetAuthToken, setSuccessMessage, setViewableUserProfile } = userSlice.actions;
 export const userReducer = userSlice.reducer;

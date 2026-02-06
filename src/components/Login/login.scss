@@ -26,14 +26,13 @@
   }
 
     .login-button {
-      width: 50%;
+      width: 100%;
       min-width: 150px;
-      padding: 0.75rem;
+      padding: 0.5rem;
       background: $primary;
       color: $white;
       border: none;
-      border-radius: 25px;
-      font-size: 1rem;
+      font-size: 0.875rem;
       cursor: pointer;
       margin: 20px 0;
       transition: background 0.2s ease;

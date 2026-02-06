@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { IGoogleAuthRequest } from '../../app/interface/request/googleAuthRequest';
 import { ILoginRequest } from '../../app/interface/request/loginRequest';
 import { ISignupRequest } from '../../app/interface/request/signupRequest';
-import { GET_USER_PROFILE_ENDPOINT, LOGIN_ENDPOINT, SIGNUP_ENDPOINT, UPDATE_USER_INFO_ENDPOINT } from '../endpoints';
+import { GET_USER_PROFILE_ENDPOINT, GOOGLE_LOGIN_ENDPOINT, LOGIN_ENDPOINT, SIGNUP_ENDPOINT, UPDATE_USER_INFO_ENDPOINT } from '../endpoints';
 
 export class userService {
   static SignUpUser = async (request: ISignupRequest) => {
@@ -11,6 +12,11 @@ export class userService {
 
   static LoginUser = async (request: ILoginRequest) => {
     const response = await axios.post(LOGIN_ENDPOINT, request);
+    return response;
+  };
+
+  static GoogleAuthUser = async (request: IGoogleAuthRequest) => {
+    const response = await axios.post(GOOGLE_LOGIN_ENDPOINT, request);
     return response;
   };
 

@@ -7,3 +7,7 @@ export const selectBlogErrorMessage = (state: RootState) => state.blog.errorMess
 export const selectIsLoading = (state: RootState) => state.blog.isLoading;
 export const selectAllBlogs = (state: RootState) => state.blog.allBlogs;
 export const selectBlogSuccessMessage = (state: RootState) => state.blog.successMessage;
+export const selectUnsplashCoverImages = (state: RootState) => state.blog.unsplashImages;
+export const selectIsUnsplashImagesLoading = (state: RootState) => state.blog.isUnsplashImagesLoadingState;
+export const selectBlogUnsplashErrorMessage = (state: RootState) => state.blog.unsplashErrorMessage;
+export const selectBlogUnsplashSuccessMessage = (state: RootState) => state.blog.unsplashSuccessMessage;

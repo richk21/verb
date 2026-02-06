@@ -2,6 +2,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -9,12 +10,10 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import axios from 'axios';
 import { ClipboardEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { IUnsplashResponse } from '../../app/interface/unsplashResponse';
 import { validateWordCount } from '../../app/utils/validateWordCount';
 import { HashtagsInput } from '../../components/HashtagsInput/HashtagsInput';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
@@ -23,16 +22,20 @@ import { BlogActions } from '../../redux/blog/blogActions';
 import {
   selectBlogErrorMessage,
   selectBlogSuccessMessage,
+  selectBlogUnsplashErrorMessage,
   selectCurrentBlog,
   selectIsLoading,
+  selectIsUnsplashImagesLoading,
+  selectUnsplashCoverImages,
 } from '../../redux/blog/blogSelectors';
 import {
   resetCurrentBlog,
   setBlogSuccessMessage,
   setCurrentBlog,
   setErrorMessage,
+  setUnsplashErrorMessage,
+  setUnsplashImages,
 } from '../../redux/blog/blogSlice';
-import { UNSPLASH_API_URL } from '../../redux/endpoints';
 import { selectUser } from '../../redux/user/userSelectors';
 import { PreviewBlog } from '../PreviewBlog/PreviewBlog';
 
@@ -56,6 +59,9 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
   const blogErrorMessage = useSelector(selectBlogErrorMessage);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const isLoading = useSelector(selectIsLoading);
+  const unsplashCoverImages = useSelector(selectUnsplashCoverImages);
+  const unsplashError = useSelector(selectBlogUnsplashErrorMessage);
+  const isUnsplashImagesLoading = useSelector(selectIsUnsplashImagesLoading);
 
   const {
     register,
@@ -81,8 +87,6 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
 
   const [coverImage, setCoverImage] = useState<string | null>(blogDraft?.coverImage || null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [unsplashImages, setUnsplashImages] = useState<IUnsplashResponse[]>([]);
-  const [unsplashError, setUnsplashError] = useState<string | null>(null);
   const [switchToPreview, setSwitchToPreview] = useState(false);
 
   useEffect(() => {
@@ -105,19 +109,14 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
     }
   }, [isEditMode, blogDraft, reset]);
 
-  //todo: move to service layer
-  const fetchRandomImages = async (count: number = 52) => {
-    try {
-      const res = await axios.get(UNSPLASH_API_URL(count, watchedTitle));
-      return res.data;
-    } catch (err) {
-      setUnsplashError('Failed to fetch images from Unsplash');
-    }
-  };
-
   useEffect(() => {
     if (openDialog) {
-      fetchRandomImages().then((images) => setUnsplashImages(images));
+      dispatch(
+        BlogActions.fetchImageFromUnsplash({
+          count: 52,
+          queryStrings: `${watchedTitle} ${watchedHashtags.join(' ')}` || 'tech',
+        })
+      );
     }
   }, [openDialog]);
 
@@ -252,7 +251,10 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
       });
     }
   };
-  console.log('avatar in draft: ', blogDraft?.authorAvatar);
+  const onCloseDialog = () => {
+    setOpenDialog(false);
+    dispatch(setUnsplashImages(null));
+  };
 
   return (
     <div>
@@ -372,38 +374,52 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
               </Stack>
 
               {/* TODO: SEPARATE COMPONENT FOR IMAGE PICKER */}
-              <Dialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
-                fullWidth
-                maxWidth="lg"
-              >
+              <Dialog open={openDialog} onClose={onCloseDialog} fullWidth maxWidth="lg">
                 <DialogTitle>Select Cover Image</DialogTitle>
-                <DialogContent>
+                {isUnsplashImagesLoading ? (
                   <Box
                     sx={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: 1,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      minHeight: 200,
+                      width: '100%',
                     }}
                   >
-                    {unsplashImages?.map((img) => (
-                      <Box
-                        key={img.id}
-                        component="img"
-                        src={img.urls.small}
-                        onClick={() => selectCoverImage(img.urls.regular)}
-                        sx={{ width: '100%', height: 120, objectFit: 'cover', cursor: 'pointer' }}
-                      />
-                    ))}
+                    <CircularProgress size={60} />
                   </Box>
-                </DialogContent>
+                ) : (
+                  <DialogContent>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: 1,
+                      }}
+                    >
+                      {unsplashCoverImages?.map((img) => (
+                        <Box
+                          key={img.id}
+                          component="img"
+                          src={img.thumb}
+                          onClick={() => selectCoverImage(img.regular)}
+                          sx={{
+                            width: '100%',
+                            height: 120,
+                            objectFit: 'cover',
+                            cursor: 'pointer',
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  </DialogContent>
+                )}
               </Dialog>
             </Box>
           </>
           {unsplashError && (
             <Notification
-              onClear={() => setUnsplashError(null)}
+              onClear={() => setUnsplashErrorMessage(null)}
               alertMessage={unsplashError}
               type="error"
             />

@@ -3,7 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import './signup.scss';
 
 import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, Button, IconButton, InputAdornment, useTheme } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Typography, useTheme } from '@mui/material';
+import { GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserActions } from '../../redux/user/userActions';
@@ -197,6 +198,29 @@ export function Signup() {
           <Button className="signup-button" type="submit" disabled={!isValid}>
             Sign Up
           </Button>
+          <Box display="flex" alignItems="center" gap={2} my={2}>
+            <Box flex={1} height="1px" bgcolor="grey.400" />
+
+            <Typography variant="body2" color="textPrimary">
+              OR
+            </Typography>
+
+            <Box flex={1} height="1px" bgcolor="grey.400" />
+          </Box>
+          <Box sx={{ marginTop: '10px', width: '100%' }}>
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                dispatch(
+                  UserActions.GoogleAuthUser({ token: credentialResponse.credential || '' })
+                );
+              }}
+              theme="outline"
+              size="large"
+              logo_alignment="center"
+              text="signup_with"
+              onError={() => console.log('Signup Failed')}
+            />
+          </Box>
         </form>
       </div>
       {signupErrorMessage && (

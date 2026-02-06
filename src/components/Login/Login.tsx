@@ -3,7 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import './login.scss';
 
 import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, Button, IconButton, InputAdornment, useTheme } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Typography, useTheme } from '@mui/material';
+import { GoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -153,6 +154,29 @@ export function Login() {
           <Button className="login-button" type="submit" disabled={!isValid}>
             Login
           </Button>
+          <Box display="flex" alignItems="center" gap={2} my={2}>
+            <Box flex={1} height="1px" bgcolor="grey.400" />
+
+            <Typography variant="body2" color="textPrimary">
+              OR
+            </Typography>
+
+            <Box flex={1} height="1px" bgcolor="grey.400" />
+          </Box>
+          <Box sx={{ marginTop: '10px', width: '100%' }}>
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                dispatch(
+                  UserActions.GoogleAuthUser({ token: credentialResponse.credential || '' })
+                );
+              }}
+              theme="outline"
+              size="large"
+              logo_alignment="center"
+              text="continue_with"
+              onError={() => console.log('Login Failed')}
+            />
+          </Box>
         </form>
       </div>
       {loginErrorMessage && (

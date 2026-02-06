@@ -3,7 +3,8 @@ import { IBlog } from '../../app/interface/blog';
 import { IBlogDeleteRequest } from '../../app/interface/request/deleteBlogRequest';
 import { IGetAllUserBlogsRequest } from '../../app/interface/request/getAllUserBlogsRequest';
 import { IRequestBlogById } from '../../app/interface/request/requestBlogById';
-import { BLOG_SAVE, DELETE_BLOG, GET_ALL_BLOGS, GET_ALL_USER_BLOGS, GET_BLOG_BY_ID } from '../endpoints';
+import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
+import { BLOG_SAVE, DELETE_BLOG, GET_ALL_BLOGS, GET_ALL_USER_BLOGS, GET_BLOG_BY_ID, UNSPLASH_API_URL } from '../endpoints';
 
 export class blogService {
 
@@ -36,6 +37,12 @@ export class blogService {
   static deleteBlog = async (request: IBlogDeleteRequest) => {
     const { blogId } = request;
     const response = await axios.delete(DELETE_BLOG(blogId));
+    return response;
+  }
+
+  static FetchImageFromUnsplash = async (request: IUnsplashRequest) => {
+    const { count, queryStrings } = request;
+    const response = await axios.get(UNSPLASH_API_URL,{params: {count, queryStrings}});
     return response;
   }
 }

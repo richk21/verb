@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IBlog } from '../../app/interface/blog';
+import { IUnsplashImages } from '../../app/interface/response/unsplashImagesResponse';
 
 interface BlogState {
   currentBlog: IBlog  | null; //FOR PREVIEW AND EDIT
@@ -9,6 +10,10 @@ interface BlogState {
   isLoading: boolean;
   errorMessage: string | null;
   successMessage: string | null;
+  unsplashImages: IUnsplashImages[] | null;
+  unsplashErrorMessage: string | null;
+  unsplashSuccessMessage: string | null;
+  isUnsplashImagesLoadingState: boolean;
 }
 
 const initialState: BlogState = {
@@ -18,7 +23,11 @@ const initialState: BlogState = {
     isLoading: false,
     errorMessage: null,
     successMessage: null,
+    unsplashImages : null,
     allBlogstotalCount: 0,
+    unsplashErrorMessage: null,
+    unsplashSuccessMessage: null,
+    isUnsplashImagesLoadingState: false,
 };
 
 const blogSlice = createSlice({
@@ -54,9 +63,21 @@ const blogSlice = createSlice({
     },
     setBlogSuccessMessage: (state, action: PayloadAction<string | null>) => {
       state.successMessage = action.payload;
+    },
+    setUnsplashImages: (state, action: PayloadAction<IUnsplashImages[] | null>) => {
+      state.unsplashImages = action.payload;
+    },
+    setUnsplashImagesLoadingState: (state, action: PayloadAction<boolean>) => {
+      state.isUnsplashImagesLoadingState = action.payload;
+    },
+    setUnsplashErrorMessage: (state, action: PayloadAction<string | null>) => {
+      state.unsplashErrorMessage = action.payload;
+    },
+    setUnsplashSuccessMessage: (state, action: PayloadAction<string | null>) => {
+      state.unsplashSuccessMessage = action.payload;
     }
   },
 });
 
-export const { setCurrentBlog, setBlog, setAllBlogs, resetCurrentBlog, setLoading, setErrorMessage, setAllBlogstotalCount, setBlogSuccessMessage } = blogSlice.actions;
+export const { setCurrentBlog, setBlog, setAllBlogs, resetCurrentBlog, setUnsplashImages, setUnsplashSuccessMessage, setUnsplashErrorMessage, setUnsplashImagesLoadingState, setLoading, setErrorMessage, setAllBlogstotalCount, setBlogSuccessMessage } = blogSlice.actions;
 export const blogReducer = blogSlice.reducer;

@@ -8,15 +8,15 @@ It’s built to feel like a minimal, distraction-free writing space with a clean
 
 ## Features
 
-* 🔐 User authentication
-* ✍️ Create, edit, and delete blogs
-* 💾 Save blogs as drafts
-* 🌍 Publish blogs for others to read
-* 🖼️ Cover image selection (Unsplash integration)
-* 🏷️ Hashtag support
-* 👤 Author profiles with avatar
-* 👀 Blog preview before publishing
-* 📱 Responsive UI
+- 🔐 User authentication
+- ✍️ Create, edit, and delete blogs
+- 💾 Save blogs as drafts
+- 🌍 Publish blogs for others to read
+- 🖼️ Cover image selection (Unsplash integration)
+- 🏷️ Hashtag support
+- 👤 Author profiles with avatar
+- 👀 Blog preview before publishing
+- 📱 Responsive UI
 
 ---
 
@@ -24,17 +24,17 @@ It’s built to feel like a minimal, distraction-free writing space with a clean
 
 ### Frontend
 
-* **React + TypeScript**
-* **Material UI (MUI)**
-* **React Hook Form**
-* **Redux Toolkit**
-* **Axios**
-* **React Markdown**
+- **React + TypeScript**
+- **Material UI (MUI)**
+- **React Hook Form**
+- **Redux Toolkit**
+- **Axios**
+- **React Markdown**
 
 ### Other Integrations
 
-* Unsplash API (cover images)
-* Image upload service (for pasted images)
+- Unsplash API (cover images)
+- Image upload service (for pasted images)
 
 ---
 
@@ -78,8 +78,9 @@ REACT_APP_DB_USERNAME = your_mongodb_username
 REACT_APP_DB_URL = your_mongodb_url
 REACT_APP_BACKEND_URL = http://localhost:5000
 REACT_APP_FRONTEND_URL = http://localhost:3000
-REACT_APP_UNSPLASH_ACCESS_KEY_API = your_api_key
 REACT_APP_IMGBB_API_KEY = your_api_key
+REACT_APP_GOOGLE_CLIENT_ID = your_google_client_id
+REACT_APP_GOOGLE_CLIENT_SECRET = your_google_client_secret
 ```
 
 ---
@@ -96,12 +97,12 @@ REACT_APP_IMGBB_API_KEY = your_api_key
 
 ## 🎯 Upcoming Features
 
-* Comments system
-* Likes / claps
-* Rich text editor
-* Blog search & filters
-* Single Sign On Integrations
-Stay tuned!
+- Comments system
+- Likes / claps
+- Rich text editor
+- Blog search & filters
+- Single Sign On Integrations
+  Stay tuned!
 
 ---
 

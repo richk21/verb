@@ -1911,6 +1911,11 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
+"@react-oauth/google@^0.13.4":
+  version "0.13.4"
+  resolved "https://registry.yarnpkg.com/@react-oauth/google/-/google-0.13.4.tgz#c462a651880162d43fd899ef91526a515ef60a78"
+  integrity sha512-hGKyNEH+/PK8M0sFEuo3MAEk0txtHpgs94tDQit+s2LXg7b6z53NtzHfqDvoB2X8O6lGB+FRg80hY//X6hfD+w==
+
 "@redux-saga/core@^1.4.2":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@redux-saga/core/-/core-1.4.2.tgz#7d64721b490c2ed88eb8b07a45074a428d5076d6"
