@@ -1,12 +1,12 @@
 import TextField from '@mui/material/TextField';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import './signup.scss';
 
 import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, IconButton, InputAdornment, Typography, useTheme } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { UserActions } from '../../redux/user/userActions';
 import { selectUserErrorMessage, selectUserSuccessMessage } from '../../redux/user/userSelectors';
 import { setErrorMessage, setSuccessMessage } from '../../redux/user/userSlice';
@@ -20,6 +20,7 @@ export interface signupFormInputs {
 
 export function Signup() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const signupErrorMessage = useSelector(selectUserErrorMessage);
@@ -46,9 +47,44 @@ export function Signup() {
   const emailId = watch('email');
   const password = watch('password');
 
+  const onLoginClick = () => {
+    navigate('../login');
+  };
+
   return (
-    <Box className="signup-container" sx={{ backgroundColor: theme.palette.background.paper }}>
-      <div className="signup-box">
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.paper,
+        minWidth: '300px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '70vh',
+        borderRadius: '25px',
+      }}
+    >
+      <Typography variant="h4">Create an account</Typography>
+      <Typography sx={{ color: theme.palette.primary.dark, justifyContent: 'left' }}>
+        Already have an account?{' '}
+        <span onClick={onLoginClick} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+          Log in
+        </span>
+      </Typography>
+      <Box
+        sx={{
+          width: '70%',
+          padding: '1rem',
+          borderRadius: '12px',
+          textAlign: 'center',
+          '& .MuiOutlinedInput-root.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: theme.palette.primary.main,
+          },
+        }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             className="name-field"
@@ -195,7 +231,28 @@ export function Signup() {
               },
             }}
           />
-          <Button className="signup-button" type="submit" disabled={!isValid}>
+          <Button
+            type="submit"
+            disabled={!isValid}
+            sx={{
+              width: '100%',
+              minWidth: '150px',
+              padding: '0.5rem',
+              background: theme.palette.primary.contrastText,
+              color: '$white',
+              border: 'none',
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              margin: '20px 0',
+              transition: 'background 0.2s ease',
+              '&:disabled': {
+                opacity: '0.6',
+              },
+              '&:hover': {
+                background: '$charcoal',
+              },
+            }}
+          >
             Sign Up
           </Button>
           <Box display="flex" alignItems="center" gap={2} my={2}>
@@ -222,7 +279,7 @@ export function Signup() {
             />
           </Box>
         </form>
-      </div>
+      </Box>
       {signupErrorMessage && (
         <Notification
           onClear={() => dispatch(setErrorMessage(null))}

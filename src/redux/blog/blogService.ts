@@ -4,7 +4,10 @@ import { IGetAllUserBlogsRequest } from '../../app/interface/request/getAllUserB
 import { IRequestBlogById } from '../../app/interface/request/requestBlogById';
 import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import api from '../axiosInstance';
-import { BLOG_SAVE, DELETE_BLOG, GET_ALL_BLOGS, GET_ALL_USER_BLOGS, GET_BLOG_BY_ID, UNSPLASH_API_URL } from '../endpoints';
+import {
+  BLOG_SAVE, DELETE_BLOG, GET_ALL_BLOGS,
+  GET_ALL_USER_BLOGS, GET_BLOG_BY_ID, UNSPLASH_API_URL
+} from '../endpoints';
 
 export class blogService {
 

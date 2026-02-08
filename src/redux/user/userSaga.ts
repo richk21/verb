@@ -8,16 +8,25 @@ import { ISignupRequest } from '../../app/interface/request/signupRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUser } from '../../app/interface/user';
 import { userService } from './userService';
-import { setErrorMessage, setLoading, setSuccessMessage, setUser, setViewableUserProfile } from './userSlice';
+import {
+  setErrorMessage,
+  setLoading,
+  setSuccessMessage,
+  setUser,
+  setViewableUserProfile,
+} from './userSlice';
 
 export function* signUpUser(action: { type: string; payload: ISignupRequest }) {
   yield put(setLoading(true));
   try {
-    const response: AxiosResponse<{message: string; user: IUser; token: string}> = yield call(userService.SignUpUser, action.payload);
+    const response: AxiosResponse<{ message: string; user: IUser; token: string }> = yield call(
+      userService.SignUpUser,
+      action.payload
+    );
     if (response.status == 201) {
       Cookies.set('token', response.data.token, { expires: 2, secure: true, sameSite: 'strict' });
       yield put(setUser(response.data.user));
-      yield put(setSuccessMessage('Account created successfully'));
+      yield put(setSuccessMessage('Account created'));
       yield put(setErrorMessage(null));
     }
   } catch (error) {
@@ -32,9 +41,16 @@ export function* signUpUser(action: { type: string; payload: ISignupRequest }) {
 export function* loginUser(action: { type: string; payload: ILoginRequest }) {
   yield put(setLoading(true));
   try {
-    const response: AxiosResponse<{message: string, user: IUser, token: string}> = yield call(userService.LoginUser, action.payload);
-    if (response.status == 200) { 
-      Cookies.set('authToken', response.data.token, { expires: 2, secure: true, sameSite: 'strict' });
+    const response: AxiosResponse<{ message: string; user: IUser; token: string }> = yield call(
+      userService.LoginUser,
+      action.payload
+    );
+    if (response.status == 200) {
+      Cookies.set('authToken', response.data.token, {
+        expires: 2,
+        secure: true,
+        sameSite: 'strict',
+      });
       yield put(setUser(response.data.user));
       yield put(setSuccessMessage('Login successful'));
       yield put(setErrorMessage(null));
@@ -51,9 +67,16 @@ export function* loginUser(action: { type: string; payload: ILoginRequest }) {
 export function* googleAuthUser(action: { type: string; payload: IGoogleAuthRequest }) {
   yield put(setLoading(true));
   try {
-    const response: AxiosResponse<{message: string, user: IUser, token: string}> = yield call(userService.GoogleAuthUser, action.payload);
-    if (response.status == 200) { 
-      Cookies.set('authToken', response.data.token, { expires: 2, secure: true, sameSite: 'strict' });
+    const response: AxiosResponse<{ message: string; user: IUser; token: string }> = yield call(
+      userService.GoogleAuthUser,
+      action.payload
+    );
+    if (response.status == 200) {
+      Cookies.set('authToken', response.data.token, {
+        expires: 2,
+        secure: true,
+        sameSite: 'strict',
+      });
       yield put(setUser(response.data.user));
       yield put(setSuccessMessage('Google login successful.'));
       yield put(setErrorMessage(null));
@@ -70,8 +93,11 @@ export function* googleAuthUser(action: { type: string; payload: IGoogleAuthRequ
 export function* getUserProfile(action: { type: string; payload: string }) {
   yield put(setLoading(true));
   try {
-    const response: AxiosResponse<{user: IUser}> = yield call(userService.GetUserProfile, action.payload);
-    if (response.status == 200 || response.status == 304) { 
+    const response: AxiosResponse<{ user: IUser }> = yield call(
+      userService.GetUserProfile,
+      action.payload
+    );
+    if (response.status == 200 || response.status == 304) {
       yield put(setUser(response.data.user));
       yield put(setErrorMessage(null));
     }
@@ -86,10 +112,13 @@ export function* getUserProfile(action: { type: string; payload: string }) {
 
 export function* getViewableUserProfile(action: { type: string; payload: string }) {
   yield put(setLoading(true));
-  console.log("ewjhejkwqhejkwqherkjwrhjkewr")
+  console.log('ewjhejkwqhejkwqherkjwrhjkewr');
   try {
-    const response: AxiosResponse<{user: IUser}> = yield call(userService.GetUserProfile, action.payload);
-    console.log("saga", response.data.user) 
+    const response: AxiosResponse<{ user: IUser }> = yield call(
+      userService.GetUserProfile,
+      action.payload
+    );
+    console.log('saga', response.data.user);
     if (response.status == 200 || response.status == 304) {
       yield put(setViewableUserProfile(response.data.user));
       yield put(setErrorMessage(null));
@@ -106,8 +135,11 @@ export function* getViewableUserProfile(action: { type: string; payload: string 
 export function* updateUserInfo(action: { type: string; payload: FormData }) {
   yield put(setLoading(true));
   try {
-    const response: AxiosResponse<{message: string, user: IUser}> = yield call(userService.UpdateUserInfo, action.payload);
-    if (response.status == 200) { 
+    const response: AxiosResponse<{ message: string; user: IUser }> = yield call(
+      userService.UpdateUserInfo,
+      action.payload
+    );
+    if (response.status == 200) {
       yield put(setUser(response.data.user));
       yield put(setErrorMessage(null));
       yield put(setSuccessMessage('Profile updated successfully'));
@@ -120,7 +152,6 @@ export function* updateUserInfo(action: { type: string; payload: FormData }) {
     yield put(setLoading(false));
   }
 }
-
 
 export function* userSaga() {
   yield takeLatest(types.USER_SIGNUP, signUpUser);

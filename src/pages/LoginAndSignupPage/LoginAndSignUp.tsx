@@ -1,10 +1,11 @@
-import { Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs, useTheme } from '@mui/material';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PathEnums } from '../../app/enum/pathEnums';
+import coverImage from '../../assets/images/cover.jpg';
+import { VerbTyping } from '../../components/TypingAnimation/TypingAnimation';
 import { selectUser } from '../../redux/user/userSelectors';
-import './loginAndSignUp.scss';
 
 export interface LoginFormInputs {
   email: string;
@@ -13,6 +14,7 @@ export interface LoginFormInputs {
 
 export function LoginAndSignUp() {
   const location = useLocation();
+  const theme = useTheme();
   const navigate = useNavigate();
   const currentPath = location.pathname === PathEnums.Login ? PathEnums.Login : PathEnums.Signup;
   const user = useSelector(selectUser);
@@ -24,8 +26,42 @@ export function LoginAndSignUp() {
   }, [user, navigate]);
 
   return (
-    <div className="login-signup-container">
-      <div className="login-box">
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        mt: -9.5,
+        backgroundColor: theme.palette.background.paper,
+      }}
+    >
+      <Box
+        sx={{
+          width: '50%',
+          borderTopRightRadius: '20%',
+          borderBottomRightRadius: '20%',
+          height: '100vh',
+          backgroundImage: `url(${coverImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <VerbTyping />
+      </Box>
+      <Box
+        sx={{
+          width: '50%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          marginLeft: 'auto',
+          alignItems: 'center',
+          mt: -10,
+        }}
+      >
         <Tabs
           value={currentPath}
           centered
@@ -37,7 +73,7 @@ export function LoginAndSignUp() {
           <Tab label="Signup" value={PathEnums.Signup} component={Link} to="/signup" />
         </Tabs>
         <Outlet />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

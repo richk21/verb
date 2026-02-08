@@ -3,9 +3,11 @@ import { IBlog } from '../../app/interface/blog';
 import { IUnsplashImages } from '../../app/interface/response/unsplashImagesResponse';
 
 interface BlogState {
-  currentBlog: IBlog  | null; //FOR PREVIEW AND EDIT
+  currentBlog: IBlog | null; //FOR PREVIEW AND EDIT
   blog: IBlog | null; //FOR VIEWING
   allBlogs: IBlog[] | null;
+  allUserBlogs: IBlog[] | null;
+  allUserBlogsTotalCount: number;
   allBlogstotalCount: number;
   isLoading: boolean;
   errorMessage: string | null;
@@ -17,17 +19,19 @@ interface BlogState {
 }
 
 const initialState: BlogState = {
-    currentBlog: null,
-    blog: null,
-    allBlogs: null,
-    isLoading: false,
-    errorMessage: null,
-    successMessage: null,
-    unsplashImages : null,
-    allBlogstotalCount: 0,
-    unsplashErrorMessage: null,
-    unsplashSuccessMessage: null,
-    isUnsplashImagesLoadingState: false,
+  currentBlog: null,
+  blog: null,
+  allBlogs: null,
+  allUserBlogs: null,
+  isLoading: false,
+  errorMessage: null,
+  successMessage: null,
+  unsplashImages: null,
+  allBlogstotalCount: 0,
+  allUserBlogsTotalCount: 0,
+  unsplashErrorMessage: null,
+  unsplashSuccessMessage: null,
+  isUnsplashImagesLoadingState: false,
 };
 
 const blogSlice = createSlice({
@@ -49,6 +53,9 @@ const blogSlice = createSlice({
         state.allBlogs = [...(state.allBlogs || []), ...blogs];
       }
     },
+    setAllUserBlogs: (state, action: PayloadAction<IBlog[]>) => {
+      state.allUserBlogs = action.payload;
+    },
     resetCurrentBlog: (state) => {
       state.currentBlog = initialState.currentBlog;
     },
@@ -58,8 +65,11 @@ const blogSlice = createSlice({
     setErrorMessage: (state, action: PayloadAction<string | null>) => {
       state.errorMessage = action.payload;
     },
-    setAllBlogstotalCount:(state, action: PayloadAction<number>) => {
+    setAllBlogstotalCount: (state, action: PayloadAction<number>) => {
       state.allBlogstotalCount = action.payload;
+    },
+    setAllUserBlogsTotalCount: (state, action: PayloadAction<number>) => {
+      state.allUserBlogsTotalCount = action.payload;
     },
     setBlogSuccessMessage: (state, action: PayloadAction<string | null>) => {
       state.successMessage = action.payload;
@@ -75,9 +85,24 @@ const blogSlice = createSlice({
     },
     setUnsplashSuccessMessage: (state, action: PayloadAction<string | null>) => {
       state.unsplashSuccessMessage = action.payload;
-    }
+    },
   },
 });
 
-export const { setCurrentBlog, setBlog, setAllBlogs, resetCurrentBlog, setUnsplashImages, setUnsplashSuccessMessage, setUnsplashErrorMessage, setUnsplashImagesLoadingState, setLoading, setErrorMessage, setAllBlogstotalCount, setBlogSuccessMessage } = blogSlice.actions;
+export const {
+  setCurrentBlog,
+  setBlog,
+  setAllBlogs,
+  resetCurrentBlog,
+  setUnsplashImages,
+  setUnsplashSuccessMessage,
+  setUnsplashErrorMessage,
+  setUnsplashImagesLoadingState,
+  setLoading,
+  setErrorMessage,
+  setAllBlogstotalCount,
+  setBlogSuccessMessage,
+  setAllUserBlogs,
+  setAllUserBlogsTotalCount,
+} = blogSlice.actions;
 export const blogReducer = blogSlice.reducer;

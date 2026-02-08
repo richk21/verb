@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BLOGS_PER_PAGE } from '../../app/constants';
 import { useUserIdFromRoute } from '../../app/hooks/useUserId';
 import { BlogActions } from '../../redux/blog/blogActions';
-import { selectAllBlogs, selectTotalBlogs } from '../../redux/blog/blogSelectors';
+import { selectAllUserBlogs, selectAllUserBlogsTotalCount } from '../../redux/blog/blogSelectors';
 import { selectUserId } from '../../redux/user/userSelectors';
 import { BlogTile } from '../BlogTile/BlogTile';
 
@@ -14,8 +14,8 @@ export const ProfilePaginatedBlogsContainer = () => {
   const dispatch = useDispatch();
   const userIdParam = useUserIdFromRoute(); //if some other user's profile
 
-  const blogs = useSelector(selectAllBlogs);
-  const totalBlogs = useSelector(selectTotalBlogs);
+  const blogs = useSelector(selectAllUserBlogs);
+  const totalBlogs = useSelector(selectAllUserBlogsTotalCount);
   const totalPages = Math.ceil(totalBlogs / BLOGS_PER_PAGE);
   const emptyText = userIdParam ? 'No blogs yet.' : 'Such empty...write today!';
 
@@ -38,6 +38,8 @@ export const ProfilePaginatedBlogsContainer = () => {
   useEffect(() => {
     setPage(1);
   }, [showDrafts, showPublished]);
+
+  console.log(blogs);
 
   return (
     <>

@@ -5,6 +5,7 @@ import { BlogView } from '../pages/BlogView/BlogView';
 import { CreateOrEditBlog } from '../pages/CreateBlog/CreateBlog';
 import { Home } from '../pages/Home/Home';
 import { LoginAndSignUp } from '../pages/LoginAndSignupPage/LoginAndSignUp';
+import { PasswordReset } from '../pages/PasswordReset/PasswordReset';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 
 export function AppRoutes() {
@@ -20,6 +21,7 @@ export function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Route>
+      <Route path="/resetPassword" element={<PasswordReset />} />
     </Routes>
   );
 }

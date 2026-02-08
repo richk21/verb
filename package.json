@@ -6,6 +6,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.7",
+    "@mui/lab": "^7.0.1-beta.21",
     "@mui/material": "^7.3.2",
     "@react-oauth/google": "^0.13.4",
     "@reduxjs/toolkit": "^2.11.2",
@@ -19,6 +20,7 @@
     "@types/react-dom": "^19.1.6",
     "axios": "^1.13.4",
     "dotenv": "^17.2.2",
+    "framer-motion": "^12.33.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
@@ -70,5 +72,6 @@
     "prettier": "^3.6.2",
     "sass": "^1.93.0",
     "sass-loader": "^16.0.5"
-  }
+  },
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8"
 }

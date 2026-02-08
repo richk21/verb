@@ -1,6 +1,5 @@
 import TextField from '@mui/material/TextField';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import './login.scss';
 
 import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, IconButton, InputAdornment, Typography, useTheme } from '@mui/material';
@@ -57,14 +56,48 @@ export function Login() {
     );
   };
 
+  const onSignUpClick = () => {
+    navigate('../signup');
+  };
+
+  const onForgotPasswordClick = () => {
+    navigate('../resetPassword');
+  };
+
   return (
     <Box
-      className="login-container"
       sx={{
         backgroundColor: theme.palette.background.paper,
+        minWidth: '300px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '70vh',
+        borderRadius: '25px',
       }}
     >
-      <div className="login-box">
+      <Typography variant="h4">Welcome back!</Typography>
+      <Typography sx={{ color: theme.palette.primary.dark }}>
+        New to Verb?{' '}
+        <span onClick={onSignUpClick} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+          Sign up
+        </span>
+      </Typography>
+      <Box
+        sx={{
+          width: '100%',
+          padding: '1rem',
+          borderRadius: '12px',
+          textAlign: 'center',
+          '& .MuiOutlinedInput-root.Mui-focused fieldset': {
+            borderColor: theme.palette.primary.main,
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: theme.palette.primary.main,
+          },
+        }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
             className="email-field"
@@ -151,7 +184,31 @@ export function Login() {
               },
             }}
           />
-          <Button className="login-button" type="submit" disabled={!isValid}>
+          <Typography sx={{ width: '100%', textDecoration: 'underline', cursor: 'pointer' }}>
+            <span onClick={onForgotPasswordClick}>forgot password?</span>
+          </Typography>
+          <Button
+            type="submit"
+            disabled={!isValid}
+            sx={{
+              width: '100%',
+              minWidth: '150px',
+              padding: '0.5rem',
+              background: theme.palette.primary.contrastText,
+              color: '$white',
+              border: 'none',
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              margin: '20px 0',
+              transition: 'background 0.2s ease',
+              '&:disabled': {
+                opacity: '0.6',
+              },
+              '&:hover': {
+                background: '$charcoal',
+              },
+            }}
+          >
             Login
           </Button>
           <Box display="flex" alignItems="center" gap={2} my={2}>
@@ -178,7 +235,7 @@ export function Login() {
             />
           </Box>
         </form>
-      </div>
+      </Box>
       {loginErrorMessage && (
         <Notification
           onClear={() => dispatch(setErrorMessage(null))}
