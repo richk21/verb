@@ -13,7 +13,7 @@ import {
 import { ClipboardEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { validateWordCount } from '../../app/utils/validateWordCount';
 import { HashtagsInput } from '../../components/HashtagsInput/HashtagsInput';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
@@ -81,6 +81,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
     },
   });
 
+  const location = useLocation();
   const watchedTitle = watch('title');
   const watchedHashtags = watch('hashtags');
   const watchedContents = watch('contents');
@@ -255,6 +256,35 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
     setOpenDialog(false);
     dispatch(setUnsplashImages(null));
   };
+
+  useEffect(() => {
+    return () => {
+      // Reset react-hook-form
+      reset({
+        title: '',
+        hashtags: [],
+        contents: '',
+      });
+
+      // Reset local state
+      setCoverImage(null);
+      setOpenDialog(false);
+      setSwitchToPreview(false);
+
+      // Reset redux state
+      dispatch(resetCurrentBlog());
+      dispatch(setUnsplashImages(null));
+      dispatch(setUnsplashErrorMessage(null));
+      dispatch(setErrorMessage(null));
+      dispatch(setBlogSuccessMessage(null));
+    };
+  }, [dispatch, reset]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetCurrentBlog());
+    };
+  }, [location.pathname]);
 
   return (
     <div>
