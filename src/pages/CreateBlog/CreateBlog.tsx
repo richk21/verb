@@ -397,7 +397,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
                 <Button
                   variant="contained"
                   onClick={handleSubmit(onPublish)}
-                  disabled={!isValid || isDirty || !blogDraft?.isDraft}
+                  disabled={blogDraft?.isDraft ? !isValid : !isValid || !isDirty}
                 >
                   Publish
                 </Button>
