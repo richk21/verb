@@ -73,8 +73,6 @@ Runs on: **[http://localhost:5000](http://localhost:5000)**
 ### Frontend `.env`
 
 ```
-REACT_APP_DB_PASSWORD = your_mongodb_password
-REACT_APP_DB_USERNAME = your_mongodb_username
 REACT_APP_DB_URL = your_mongodb_url
 REACT_APP_BACKEND_URL = http://localhost:5000
 REACT_APP_FRONTEND_URL = http://localhost:3000

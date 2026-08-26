@@ -57,12 +57,11 @@ export const BlogTileContainer = () => {
     <Box
       sx={{
         display: 'flex',
-        flexWrap: 'wrap',
-        gap: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
         flexDirection: 'column',
-        padding: 4,
+        gap: 2,
+        maxWidth: 900,
+        mx: 'auto',
+        padding: '24px 16px',
       }}
     >
       {blogs?.map((blog, index) => {

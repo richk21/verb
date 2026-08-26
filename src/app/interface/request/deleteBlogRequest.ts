@@ -1,4 +1,4 @@
 export interface IBlogDeleteRequest {
-    userId: string;
-    blogId: string;
+  userId: string;
+  blogId: string;
 }

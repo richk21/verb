@@ -1,49 +1,47 @@
 @import './../../styles/variables';
 
 .navbar-container {
-    .navbar-toolbar {
+  .navbar-toolbar {
     display: flex;
     flex-direction: row;
     flex: 1 0 0;
     justify-content: space-between;
-    .verb-logo{
-        height: auto;
-        width: 90px;
+    .verb-logo {
+      height: auto;
+      width: 90px;
     }
- 
+
     .nav-icon {
-        transition: all 0.3s ease;
-        border-radius: 50%;
-        padding: 6px;
-        cursor: pointer;
-        position: relative;
-        padding: 10px;
-        
-        &.light-inactive {
-            color: $primary;
-            background-color: transparent;
-        }
-        
-        &.light-active {
-            color: $white;
-    background-color: $primary;
-}
+      transition: all 0.3s ease;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      position: relative;
+      padding: 8px;
 
-&.dark-inactive {
-    color: $white;
-    background-color: transparent;
-}
+      &.light-inactive {
+        color: $grey;
+        background-color: transparent;
+      }
 
-&.dark-active {
-    color: $primary;
-    background-color: $white;
-}
+      &.light-active {
+        color: $primary;
+        background-color: rgba(52, 84, 209, 0.08);
+      }
 
-&.MuiIconButton-root:hover {
-    color: $white;
-    background-color: $primary;
-}
-}
+      &.dark-inactive {
+        color: #94a3b8;
+        background-color: transparent;
+      }
+
+      &.dark-active {
+        color: #5c7cfa;
+        background-color: rgba(92, 124, 250, 0.16);
+      }
+
+      &.MuiIconButton-root:hover {
+        color: $primary;
+        background-color: rgba(52, 84, 209, 0.06);
+      }
     }
-
+  }
 }

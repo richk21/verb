@@ -10,6 +10,13 @@ import { IBlog } from '../../app/interface/blog';
 import { IBlogDeleteRequest } from '../../app/interface/request/deleteBlogRequest';
 import { IGetAllUserBlogsRequest } from '../../app/interface/request/getAllUserBlogsRequest';
 import { IRequestBlogById } from '../../app/interface/request/requestBlogById';
+import {
+  IAddCommentRequest,
+  IApproveBlogRequest,
+  IPublishBlogRequest,
+  IRequestChangesRequest,
+  ISubmitForReviewRequest,
+} from '../../app/interface/request/reviewWorkflowRequest';
 import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUnsplashImagesResponse } from '../../app/interface/response/unsplashImagesResponse';
@@ -179,6 +186,61 @@ export function* fetchImageFromUnsplash(action: { type: string; payload: IUnspla
   }
 }
 
+export function* submitForReview(action: { type: string; payload: ISubmitForReviewRequest }) {
+  try {
+    const response: AxiosResponse = yield call(blogService.submitForReview, action.payload);
+    yield put(setCurrentBlog(response.data));
+    yield put(setBlogSuccessMessage('Submitted for review'));
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(setErrorMessage(err.response?.data.message || 'Failed to submit for review'));
+  }
+}
+
+export function* approveBlog(action: { type: string; payload: IApproveBlogRequest }) {
+  try {
+    const response: AxiosResponse = yield call(blogService.approveBlog, action.payload);
+    yield put(setCurrentBlog(response.data));
+    yield put(setBlogSuccessMessage('Blog has been approved'));
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(setErrorMessage(err.response?.data.message || 'Failed to approve blog'));
+  }
+}
+
+export function* requestChanges(action: { type: string; payload: IRequestChangesRequest }) {
+  try {
+    const response: AxiosResponse = yield call(blogService.requestChanges, action.payload);
+    yield put(setCurrentBlog(response.data));
+    yield put(setBlogSuccessMessage('Changes requested for blog'));
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(setErrorMessage(err.response?.data.message || 'Failed to request changes'));
+  }
+}
+
+export function* publishBlogFinal(action: { type: string; payload: IPublishBlogRequest }) {
+  try {
+    const response: AxiosResponse = yield call(blogService.publishBlogFinal, action.payload);
+    yield put(setCurrentBlog(response.data));
+    yield put(setBlogSuccessMessage('Blog has been published'));
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(setErrorMessage(err.response?.data.message || 'Failed to publish blog'));
+  }
+}
+
+export function* addReviewComment(action: { type: string; payload: IAddCommentRequest }) {
+  try {
+    const response: AxiosResponse = yield call(blogService.addReviewComment, action.payload);
+    yield put(setCurrentBlog(response.data));
+    yield put(setBlogSuccessMessage('Comment added'));
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(setErrorMessage(err.response?.data.message || 'Failed to add the comment'));
+  }
+}
+
 export function* blogSaga() {
   yield takeLatest(types.BLOG_SAVE, saveBlog);
   yield takeLatest(types.GET_ALL_BLOGS, getAllBlogs);
@@ -187,4 +249,9 @@ export function* blogSaga() {
   yield takeLatest(types.GET_BLOG_BY_ID, getBlogById);
   yield takeLatest(types.BLOG_DELETE, deleteBlog);
   yield takeLatest(types.BLOG_GET_IMAGES_UNSPLASH, fetchImageFromUnsplash);
+  yield takeLatest(types.SUBMIT_FOR_REVIEW, submitForReview);
+  yield takeLatest(types.APPROVE_BLOG, approveBlog);
+  yield takeLatest(types.REQUEST_CHANGES, requestChanges);
+  yield takeLatest(types.PUBLISH_BLOG_FINAL, publishBlogFinal);
+  yield takeLatest(types.ADD_REVIEW_COMMENT, addReviewComment);
 }

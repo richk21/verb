@@ -69,15 +69,6 @@ export function BlogTile({
     navigate(`../blog/${id}`);
   };
 
-  function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
   const removeMarkdown = (text: string) => {
     return text
       .replace(/[#*`~>!\\[\]()]/g, '')
@@ -91,13 +82,16 @@ export function BlogTile({
   return (
     <Card
       sx={{
-        width: 850,
-        borderRadius: 3,
-        boxShadow: theme.shadows[3],
+        width: '100%',
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: 'none',
         bgcolor: theme.palette.background.paper,
         color: theme.palette.text.primary,
         display: 'flex',
         flexDirection: 'column',
+        transition: 'border-color 0.15s ease',
+        '&:hover': { borderColor: theme.palette.primary.main },
       }}
     >
       {coverImageUrl && (
@@ -110,8 +104,8 @@ export function BlogTile({
             objectFit: 'cover',
             width: '100%',
             display: 'block',
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
           }}
         />
       )}
@@ -161,8 +155,8 @@ export function BlogTile({
                 <Typography
                   style={{
                     borderRadius: '15px',
-                    color: theme.palette.primary.main,
-                    background: theme.palette.text.secondary,
+                    color: '#fff',
+                    background: isDraft ? theme.palette.grey[500] : theme.palette.success.main,
                     fontSize: '0.75rem',
                     padding: '2px 8px',
                     display: 'inline-block',
@@ -215,10 +209,12 @@ export function BlogTile({
                 key={tag}
                 label={`#${tag}`}
                 size="small"
+                variant="outlined"
                 sx={{
                   mr: 0.5,
-                  bgcolor: getRandomColor(),
-                  color: '#fff',
+                  borderColor: 'divider',
+                  color: 'text.secondary',
+                  bgcolor: 'transparent',
                 }}
               />
             ))}
@@ -249,8 +245,8 @@ export function BlogTile({
         <WarningModal
           open={openDeleteModal}
           onClose={() => setOpenDeleteModal(false)}
-          title="Delete Blog"
-          message="Are you sure you want to delete this blog?"
+          title="Delete Incident Report"
+          message="Are you sure you want to delete this incident report? This cannot be undone."
           onSubmit={handleDelete}
           submitLabel="Delete"
         />

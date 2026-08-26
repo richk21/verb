@@ -14,6 +14,8 @@ import {
   selectUserSuccessMessage,
 } from '../../redux/user/userSelectors';
 import { setErrorMessage, setSuccessMessage } from '../../redux/user/userSlice';
+import { AuthLayout } from '../AuthTabs/AuthLayout';
+import { AuthTabs } from '../AuthTabs/AuthTabs';
 import { Notification } from '../Notification/Notification';
 
 export interface LoginFormInputs {
@@ -65,22 +67,15 @@ export function Login() {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: theme.palette.background.paper,
-        minWidth: '300px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '70vh',
-        borderRadius: '25px',
-      }}
-    >
+    <AuthLayout variant="split">
+      <AuthTabs />
       <Typography variant="h4">Welcome back!</Typography>
-      <Typography sx={{ color: theme.palette.primary.dark }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         New to Verb?{' '}
-        <span onClick={onSignUpClick} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+        <span
+          onClick={onSignUpClick}
+          style={{ color: theme.palette.primary.main, cursor: 'pointer', fontWeight: 600 }}
+        >
           Sign up
         </span>
       </Typography>
@@ -250,6 +245,6 @@ export function Login() {
           type="success"
         />
       )}
-    </Box>
+    </AuthLayout>
   );
 }
