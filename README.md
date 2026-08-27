@@ -1,112 +1,114 @@
-# Verb — Modern Blogging Web App
+# Verb — Frontend
 
-**Verb** is a full-stack blogging platform where users can log in, write blogs in markdown, insert media in the blogs, save drafts, and publish posts with cover images and hashtags.
+React/TypeScript frontend for Verb, an internal engineering incident
+reporting and review platform. Handles auth (including org selection at
+signup), the report authoring/editing flow, the review workflow UI, and
+role-aware navigation.
 
-It’s built to feel like a minimal, distraction-free writing space with a clean reading experience.
-
----
-
-## Features
-
-- 🔐 User authentication
-- ✍️ Create, edit, and delete blogs
-- 💾 Save blogs as drafts
-- 🌍 Publish blogs for others to read
-- 🖼️ Cover image selection (Unsplash integration)
-- 🏷️ Hashtag support
-- 👤 Author profiles with avatar
-- 👀 Blog preview before publishing
-- 📱 Responsive UI
+Backend repo: `<link to your backend repo>`
 
 ---
 
-## 🧠 Tech Stack
+## Tech stack
 
-### Frontend
-
-- **React + TypeScript**
-- **Material UI (MUI)**
-- **React Hook Form**
-- **Redux Toolkit**
-- **Axios**
-- **React Markdown**
-
-### Other Integrations
-
-- Unsplash API (cover images)
-- Image upload service (for pasted images)
+React, TypeScript, Redux Toolkit + Redux-Saga, Material UI (MUI), React
+Router, react-hook-form.
 
 ---
 
-## ⚙️ Installation
-
-### 1️⃣ Clone the repo
-
-```bash
-git clone [https://github.com/your-username/verb.git](https://github.com/richk21/verb)
-cd verb
-```
-
----
-
-### 2️⃣ Frontend Setup
+## Getting started
 
 ```bash
 yarn install
-yarn launch
+cp .env.example .env   # fill in the values below
+yarn start
 ```
 
-Runs on: **[http://localhost:3000](http://localhost:3000)**
+### Environment variables
+
+| Variable                                                        | Purpose                          |
+| --------------------------------------------------------------- | -------------------------------- |
+| `REACT_APP_BACKEND_URL`                                         | Base URL of the Verb API         |
+| `REACT_APP_FRONTEND_URL`                                        | Used for OAuth redirect handling |
+| `REACT_APP_GOOGLE_CLIENT_ID` / `REACT_APP_GOOGLE_CLIENT_SECRET` | Google sign-in                   |
+| `REACT_APP_IMGBB_API_KEY`                                       | Fallback image hosting           |
 
 ---
 
-### 3️⃣ Backend Setup
-
-navigate to backend repository: https://github.com/richk21/verb-backend repository
-
-Runs on: **[http://localhost:5000](http://localhost:5000)**
-
----
-
-## 🔑 Environment Variables
-
-### Frontend `.env`
+## Project structure
 
 ```
-REACT_APP_DB_URL = your_mongodb_url
-REACT_APP_BACKEND_URL = http://localhost:5000
-REACT_APP_FRONTEND_URL = http://localhost:3000
-REACT_APP_IMGBB_API_KEY = your_api_key
-REACT_APP_GOOGLE_CLIENT_ID = your_google_client_id
-REACT_APP_GOOGLE_CLIENT_SECRET = your_google_client_secret
+src/
+├── app/            # routing, theme, shared interfaces, enums, axios instance
+├── components/     # shared/reusable UI (Navbar, ReportTile, AuthLayout, ...)
+├── pages/          # route-level views (Home, ReportView, CreateReport, ...)
+└── redux/          # feature-sliced Redux Toolkit + Saga (user/, report/)
 ```
 
----
-
-## 🧩 How It Works
-
-1. Users log in
-2. They can write blogs using markdown
-3. Images can be pasted directly into the editor
-4. Blogs can be saved as drafts or published
-5. Published blogs are available for reading
+Redux is organized per-feature, each with the same five files:
+`*Actions.ts`, `*Slice.ts`, `*Saga.ts`, `*Service.ts` (API calls),
+`*Selectors.ts`.
 
 ---
 
-## 🎯 Upcoming Features
+## Signing up
 
-- Comments system
-- Likes / claps
-- Rich text editor
-- Blog search & filters
-- Single Sign On Integrations
-  Stay tuned!
+Every account belongs to an organization, chosen at signup. If the
+organization name entered doesn't exist yet, the account becomes its
+first **Admin**; if it already exists, the account joins as a
+**Contributor**. There's currently no in-app way to change a member's
+role after signup — see [Known gaps](#known-gaps--next-steps).
+
+---
+
+## Roles (read from `user.role` in Redux state)
+
+| Role          | UI behavior                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| `contributor` | Can create/edit their own reports and submit for review                  |
+| `reviewer`    | Sees Approve / Request Changes / Publish actions on reports under review |
+| `auditor`     | Read-only throughout; no write actions render for this role              |
+| `admin`       | Same as reviewer, plus (planned) role management                         |
+
+Role checks in the UI are for **experience only** — hiding buttons a user
+isn't allowed to use. The backend independently enforces every
+permission via `requireRole` middleware; the frontend check is never the
+actual security boundary.
 
 ---
 
-## 🤝 Contributing
+## Known gaps / next steps
 
-Pull requests are welcome!
-If you’d like to improve Verb, feel free to fork and submit changes.
+- **Review workflow UI** — the Redux actions/service/saga for submit /
+  approve / request-changes / publish / comment exist, but nothing in
+  `ReportView` renders the buttons, a status stepper, or a comment thread
+  yet.
+- **`IReport` type still carries the legacy `isDraft: boolean`** rather
+  than the backend's `status` enum (`draft` / `under_review` / `approved`
+  / `published`), plus `reviewerId`, `reviewerComments`, and `timeline`,
+  none of which are typed on the frontend yet.
+- **Known bug**: the review-workflow sagas (`submitForReview`,
+  `approveReport`, `requestChanges`, `publishReportFinal`,
+  `addReviewComment`) dispatch `setCurrentReport`, but `ReportView`
+  (the page that will host these actions) reads from `selectReport`
+  (populated by `setReport`). These need to dispatch `setReport` instead,
+  or the on-screen report won't update after a review action succeeds.
+- **Known bug**: the "create report" nav icon in `Navbar.tsx` still
+  navigates to `/blog-post`; the actual route is `/report-post`.
+- **Admin role management UI** — no screen yet lets an Admin change
+  another member's role.
+- **Test coverage** — no frontend tests yet.
+- **Auth hardening** — the app currently expects the JWT in the response
+  body / client-side storage rather than an HTTP-only cookie; will need
+  an `axios` + CORS update if the backend moves to cookie-based auth.
 
 ---
+
+## Design notes
+
+- Theme, palette, and typography are centralized in `app/theme.ts` —
+  avoid hardcoding colors in components; pull from
+  `theme.palette.*`/`theme.shape.*` so future palette changes cascade
+  everywhere automatically.
+- `AuthLayout` is the single shared layout for Login/Signup — don't
+  build a one-off layout inside either page again.

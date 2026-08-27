@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { Notification } from '../../components/Notification/Notification';
-import { ProfilePaginatedBlogsContainer } from '../../components/ProfilePaginatedBlogsContainer/ProfilePaginatedBlogsContainer';
+import { ProfilePaginatedReportsContainer } from '../../components/ProfilePaginatedReportsContainer/ProfilePaginatedReportsContainer';
 import {
   selectIsLoading,
   selectUser,
@@ -30,9 +30,9 @@ const ProfilePage = ({ isViewMode }: IProfilePageProps) => {
       {isViewMode ? <ViewableProfileSection user={user} /> : <ProfileSection user={user} />}
       <Box sx={{ mt: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Typography variant="h3" mb={2}>
-          {name} Blogs
+          {name} Reports
         </Typography>
-        <ProfilePaginatedBlogsContainer />
+        <ProfilePaginatedReportsContainer />
       </Box>
       {successMessage && (
         <Notification

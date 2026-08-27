@@ -1,30 +1,26 @@
-import { ArrowBack } from '@mui/icons-material';
-import { Box, Chip, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
+import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import { utcToDmy } from '../../app/utils/dateUtcToDmy';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { ReportActions } from '../../redux/report/reportActions';
+import { selectReport } from '../../redux/report/reportSelectors';
 
-interface IPreviewBlog {
-  title?: string;
-  content?: string;
-  hashtags?: string[];
-  coverImage?: string | null;
-  authorName?: string;
-  createdAt?: Date | null;
-  onBackButtonClick?: () => void;
-  userAvatar?: string;
-}
-
-export const PreviewBlog = ({
-  title = '',
-  content = '',
-  hashtags = [],
-  coverImage = '',
-  authorName = '',
-  createdAt = null,
-  userAvatar = '',
-  onBackButtonClick,
-}: IPreviewBlog) => {
+export const ReportView = () => {
+  const dispatch = useDispatch();
+  const reportId = useParams().id || '';
   const theme = useTheme();
+  const report = useSelector(selectReport);
+
+  useEffect(() => {
+    if (reportId) {
+      dispatch(ReportActions.getReportById({ reportId }));
+    }
+  }, [dispatch, reportId]);
+
+  if (!report) return <LoadingOverlay />;
 
   return (
     <Box
@@ -38,26 +34,13 @@ export const PreviewBlog = ({
       }}
     >
       <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
-        <IconButton
-          sx={{
-            position: 'absolute',
-            top: 16,
-            left: -80,
-            zIndex: 2,
-            background: 'rgba(255,255,255,0.7)',
-          }}
-          onClick={() => onBackButtonClick && onBackButtonClick()}
-        >
-          <ArrowBack sx={{ fontSize: 28 }} />
-        </IconButton>
-
-        {coverImage && (
+        {report?.coverImage && (
           <Box
             sx={{
               width: '100%',
               height: 300,
               bgcolor: theme.palette.grey[200],
-              backgroundImage: `url(${coverImage})`,
+              backgroundImage: `url(${report?.coverImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderRadius: 3,
@@ -66,7 +49,7 @@ export const PreviewBlog = ({
         )}
       </Box>
       <Typography variant="h3" fontWeight={700} gutterBottom>
-        {title}
+        {report?.title}
       </Typography>
       <Box
         sx={{
@@ -79,7 +62,7 @@ export const PreviewBlog = ({
         }}
       >
         <Stack direction="row" spacing={1} mb={3}>
-          {hashtags?.map((tag) => (
+          {report?.hashtags?.map((tag) => (
             <Chip key={tag} label={`#${tag}`} />
           ))}
         </Stack>
@@ -93,7 +76,7 @@ export const PreviewBlog = ({
               minWidth: 160,
             }}
           >
-            {authorName && (
+            {report?.authorName && (
               <span
                 style={{
                   color: theme.palette.text.secondary,
@@ -102,26 +85,48 @@ export const PreviewBlog = ({
                   lineHeight: 1.3,
                 }}
               >
-                By {authorName}
+                By{' '}
+                <Link to={`/profile/${report?.authorId}`}>
+                  <Typography
+                    sx={{
+                      display: 'inline',
+                      color: theme.palette.text.secondary,
+                      fontWeight: 500,
+                      fontSize: 15,
+                      lineHeight: 1.3,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {report?.authorName}
+                  </Typography>
+                </Link>
               </span>
             )}
-            {createdAt && (
+            {report?.createdAt && (
               <span
                 style={{
                   color: theme.palette.text.secondary,
                   fontSize: 13,
                 }}
               >
-                {utcToDmy(createdAt)}
+                {utcToDmy(new Date(report?.createdAt || ''))}
               </span>
             )}
           </Box>
-          <Box
-            component="img"
-            src={userAvatar}
-            alt="Author Avatar"
-            sx={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
-          />
+          <Link to={`/profile/${report?.authorId}`}>
+            <Box
+              component="img"
+              src={report?.authorAvatar}
+              alt="Author Avatar"
+              sx={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                cursor: 'pointer',
+              }}
+            />
+          </Link>
         </Stack>
       </Box>
       <Box
@@ -143,7 +148,7 @@ export const PreviewBlog = ({
           },
         }}
       >
-        <ReactMarkdown>{content}</ReactMarkdown>
+        <ReactMarkdown>{report?.content}</ReactMarkdown>
       </Box>
     </Box>
   );

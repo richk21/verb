@@ -1,4 +1,4 @@
-export interface IGetAllUserBlogsRequest {
+export interface IGetAllUserReportsRequest {
   userId: string;
   getDrafts?: boolean;
   getPublished?: boolean;

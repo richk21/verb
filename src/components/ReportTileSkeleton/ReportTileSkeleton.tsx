@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack } from '@mui/material';
 
-export const BlogTileSkeleton = () => {
+export const ReportTileSkeleton = () => {
   return (
     <Box sx={{ width: 320 }}>
       <Skeleton variant="rectangular" height={180} sx={{ borderRadius: 2 }} />

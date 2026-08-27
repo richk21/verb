@@ -2,7 +2,7 @@ export interface ISubmitForReviewRequest {
   id: string;
 }
 
-export interface IApproveBlogRequest {
+export interface IApproveReportRequest {
   id: string;
 }
 
@@ -11,7 +11,7 @@ export interface IRequestChangesRequest {
   comment: string;
 }
 
-export interface IPublishBlogRequest {
+export interface IPublishReportRequest {
   id: string;
 }
 

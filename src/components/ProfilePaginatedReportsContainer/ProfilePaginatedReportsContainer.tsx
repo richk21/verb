@@ -1,23 +1,26 @@
 import { Box, Chip, Pagination, Stack, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BLOGS_PER_PAGE } from '../../app/constants';
+import { REPORTS_PER_PAGE } from '../../app/constants';
 import { useUserIdFromRoute } from '../../app/hooks/useUserId';
-import { BlogActions } from '../../redux/blog/blogActions';
-import { selectAllUserBlogs, selectAllUserBlogsTotalCount } from '../../redux/blog/blogSelectors';
+import { ReportActions } from '../../redux/report/reportActions';
+import {
+  selectAllUserReports,
+  selectAllUserReportsTotalCount,
+} from '../../redux/report/reportSelectors';
 import { selectUserId } from '../../redux/user/userSelectors';
-import { BlogTile } from '../BlogTile/BlogTile';
+import { ReportTile } from '../ReportTile/ReportTile';
 
-export const ProfilePaginatedBlogsContainer = () => {
+export const ProfilePaginatedReportsContainer = () => {
   const theme = useTheme();
   const userId = useSelector(selectUserId);
   const dispatch = useDispatch();
   const userIdParam = useUserIdFromRoute(); //if some other user's profile
 
-  const blogs = useSelector(selectAllUserBlogs);
-  const totalBlogs = useSelector(selectAllUserBlogsTotalCount);
-  const totalPages = Math.ceil(totalBlogs / BLOGS_PER_PAGE);
-  const emptyText = userIdParam ? 'No blogs yet.' : 'Such empty...write today!';
+  const reports = useSelector(selectAllUserReports);
+  const totalReports = useSelector(selectAllUserReportsTotalCount);
+  const totalPages = Math.ceil(totalReports / REPORTS_PER_PAGE);
+  const emptyText = userIdParam ? 'No reports yet.' : 'Such empty...write today!';
 
   const [showDrafts, setShowDrafts] = useState(true);
   const [showPublished, setShowPublished] = useState(true);
@@ -25,12 +28,12 @@ export const ProfilePaginatedBlogsContainer = () => {
 
   useEffect(() => {
     dispatch(
-      BlogActions.getAllUserBlogs({
+      ReportActions.getAllUserReports({
         userId: userIdParam ? userIdParam : userId,
         getDrafts: userIdParam ? false : showDrafts,
         getPublished: userIdParam ? true : showPublished,
         page,
-        limit: BLOGS_PER_PAGE,
+        limit: REPORTS_PER_PAGE,
       })
     );
   }, [dispatch, userId, showDrafts, showPublished, page]);
@@ -39,7 +42,7 @@ export const ProfilePaginatedBlogsContainer = () => {
     setPage(1);
   }, [showDrafts, showPublished]);
 
-  console.log(blogs);
+  console.log(reports);
 
   return (
     <>
@@ -59,7 +62,7 @@ export const ProfilePaginatedBlogsContainer = () => {
           />
         </Stack>
       )}
-      {blogs?.length != 0 ? (
+      {reports?.length != 0 ? (
         <Box
           sx={{
             display: 'flex',
@@ -71,20 +74,20 @@ export const ProfilePaginatedBlogsContainer = () => {
             padding: 4,
           }}
         >
-          {blogs?.map((blog) => (
-            <BlogTile
-              key={blog.id}
-              id={blog.id}
-              title={blog.title}
-              hashtags={blog.hashtags}
-              content={blog.content}
-              coverImageUrl={blog.coverImage || ''}
-              author={blog.authorName}
-              datePublished={blog.createdAt}
-              isDraft={blog.isDraft}
+          {reports?.map((report) => (
+            <ReportTile
+              key={report.id}
+              id={report.id}
+              title={report.title}
+              hashtags={report.hashtags}
+              content={report.content}
+              coverImageUrl={report.coverImage || ''}
+              author={report.authorName}
+              datePublished={report.createdAt}
+              isDraft={report.isDraft}
               isProfilePage
               userId={userId}
-              userAvatar={blog.authorAvatar}
+              userAvatar={report.authorAvatar}
             />
           ))}
         </Box>

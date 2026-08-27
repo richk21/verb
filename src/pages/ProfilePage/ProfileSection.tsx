@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { IUser } from '../../app/interface/user';
-import { setAllBlogs, setAllBlogstotalCount } from '../../redux/blog/blogSlice';
+import { setAllReports, setAllReportstotalCount } from '../../redux/report/reportSlice';
 import { UserActions } from '../../redux/user/userActions';
 import { CoverImage } from './CoverImage';
 import { ProfileImage } from './ProfileImage';
@@ -67,8 +67,8 @@ export const ProfileSection = ({ user }: IProfileSectionProps) => {
 
   useEffect(() => {
     return () => {
-      dispatch(setAllBlogs({ blogs: [], page: 1 }));
-      dispatch(setAllBlogstotalCount(0));
+      dispatch(setAllReports({ reports: [], page: 1 }));
+      dispatch(setAllReportstotalCount(0));
     };
   }, [dispatch]);
 

@@ -4,7 +4,7 @@ const FONT_STACK = "'Inter', 'Montserrat', sans-serif";
 const MONO_STACK = "'IBM Plex Mono', 'source-code-pro', monospace";
 
 // Shared status-color mapping used by both themes — this is the single
-// place status colors are defined. Any Chip/badge for blog.status should
+// place status colors are defined. Any Chip/badge for report.status should
 // read from theme.palette.<status>.main, not a hardcoded hex.
 const statusPalette = {
   draft: { main: '#64748B', contrastText: '#fff' }, // slate

@@ -1,7 +1,7 @@
 import { all } from 'redux-saga/effects';
-import { blogSaga } from './blog/blogSaga';
+import { reportSaga } from './report/reportSaga';
 import { userSaga } from './user/userSaga';
 
 export default function* rootSaga() {
-  yield all([userSaga(), blogSaga()]);
+  yield all([userSaga(), reportSaga()]);
 }

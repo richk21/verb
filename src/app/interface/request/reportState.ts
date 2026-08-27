@@ -1,4 +1,4 @@
-export interface IBlogState {
+export interface IReportState {
   id: string | null;
   title: string;
   hashtags: string[];

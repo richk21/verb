@@ -8,14 +8,14 @@ export const GET_USER_PROFILE_ENDPOINT = (id: string) => `${BASE_URL}/api/users/
 
 export const UNSPLASH_API_URL = `${BASE_URL}/api/unsplash/getCoverImages`;
 
-export const BLOG_SAVE = `${BASE_URL}/api/blogs/save`;
-export const GET_ALL_BLOGS = `${BASE_URL}/api/blogs/getAll`;
-export const DELETE_BLOG = (id: string) => `${BASE_URL}/api/blogs/delete/${id}`;
-export const GET_ALL_USER_BLOGS = `${BASE_URL}/api/blogs/getAllUserBlogs`;
-export const GET_BLOG_BY_ID = (id: string) => `${BASE_URL}/api/blogs/getById/${id}`;
+export const REPORT_SAVE = `${BASE_URL}/api/reports/save`;
+export const GET_ALL_REPORTS = `${BASE_URL}/api/reports/getAll`;
+export const DELETE_REPORT = (id: string) => `${BASE_URL}/api/reports/delete/${id}`;
+export const GET_ALL_USER_REPORTS = `${BASE_URL}/api/reports/getAllUserReports`;
+export const GET_REPORT_BY_ID = (id: string) => `${BASE_URL}/api/reports/getById/${id}`;
 
-export const SUBMIT_FOR_REVIEW = `${BASE_URL}/api/blogs/submit-for-review`;
-export const APPROVE_BLOG = `${BASE_URL}/api/blogs/approve`;
-export const REQUEST_CHANGES = `${BASE_URL}/api/blogs/request-changes`;
-export const PUBLISH_BLOG_FINAL = `${BASE_URL}/api/blogs/publish-final`;
-export const ADD_REVIEW_COMMENT = `${BASE_URL}/api/blogs/comment`;
+export const SUBMIT_FOR_REVIEW = `${BASE_URL}/api/reports/submit-for-review`;
+export const APPROVE_REPORT = `${BASE_URL}/api/reports/approve`;
+export const REQUEST_CHANGES = `${BASE_URL}/api/reports/request-changes`;
+export const PUBLISH_REPORT_FINAL = `${BASE_URL}/api/reports/publish-final`;
+export const ADD_REVIEW_COMMENT = `${BASE_URL}/api/reports/comment`;

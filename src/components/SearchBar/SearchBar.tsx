@@ -26,7 +26,7 @@ export const SearchBar = () => {
     >
       <SearchIcon sx={{ color: 'primary', mr: 1 }} />
       <InputBase
-        placeholder="Search blogs"
+        placeholder="Search reports"
         inputProps={{ 'aria-label': 'search' }}
         sx={{ color: 'inherit', width: '100%' }}
       />

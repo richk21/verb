@@ -18,49 +18,49 @@ import { validateWordCount } from '../../app/utils/validateWordCount';
 import { HashtagsInput } from '../../components/HashtagsInput/HashtagsInput';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { Notification } from '../../components/Notification/Notification';
-import { BlogActions } from '../../redux/blog/blogActions';
+import { ReportActions } from '../../redux/report/reportActions';
 import {
-  selectBlogErrorMessage,
-  selectBlogSuccessMessage,
-  selectBlogUnsplashErrorMessage,
-  selectCurrentBlog,
+  selectCurrentReport,
   selectIsLoading,
   selectIsUnsplashImagesLoading,
+  selectReportErrorMessage,
+  selectReportSuccessMessage,
+  selectReportUnsplashErrorMessage,
   selectUnsplashCoverImages,
-} from '../../redux/blog/blogSelectors';
+} from '../../redux/report/reportSelectors';
 import {
-  resetCurrentBlog,
-  setBlogSuccessMessage,
-  setCurrentBlog,
+  resetCurrentReport,
+  setCurrentReport,
   setErrorMessage,
+  setReportSuccessMessage,
   setUnsplashErrorMessage,
   setUnsplashImages,
-} from '../../redux/blog/blogSlice';
+} from '../../redux/report/reportSlice';
 import { selectUser } from '../../redux/user/userSelectors';
-import { PreviewBlog } from '../PreviewBlog/PreviewBlog';
+import { PreviewReport } from '../PreviewReport/PreviewReport';
 
-export interface BlogFormInputs {
+export interface reportFormInputs {
   title: string;
   hashtags: string[];
   contents: string;
 }
 
-interface ICreateOrEditBlogProps {
+interface ICreateOrEditreportProps {
   isEditMode?: boolean;
 }
 
-export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps) => {
-  const blogId = useParams().id || '';
+export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportProps) => {
+  const reportId = useParams().id || '';
   const dispatch = useDispatch();
   const theme = useTheme();
-  const blogDraft = useSelector(selectCurrentBlog);
+  const reportDraft = useSelector(selectCurrentReport);
   const user = useSelector(selectUser);
-  const blogSuccessMessage = useSelector(selectBlogSuccessMessage);
-  const blogErrorMessage = useSelector(selectBlogErrorMessage);
+  const reportSuccessMessage = useSelector(selectReportSuccessMessage);
+  const reportErrorMessage = useSelector(selectReportErrorMessage);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const isLoading = useSelector(selectIsLoading);
   const unsplashCoverImages = useSelector(selectUnsplashCoverImages);
-  const unsplashError = useSelector(selectBlogUnsplashErrorMessage);
+  const unsplashError = useSelector(selectReportUnsplashErrorMessage);
   const isUnsplashImagesLoading = useSelector(selectIsUnsplashImagesLoading);
 
   const {
@@ -72,7 +72,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
     control,
     reset,
     formState: { errors, isValid, isDirty },
-  } = useForm<BlogFormInputs>({
+  } = useForm<reportFormInputs>({
     mode: 'onChange',
     defaultValues: {
       title: '',
@@ -87,21 +87,21 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
   const watchedHashtags = watch('hashtags');
   const watchedContents = watch('contents');
 
-  const [coverImage, setCoverImage] = useState<string | null>(blogDraft?.coverImage || null);
+  const [coverImage, setCoverImage] = useState<string | null>(reportDraft?.coverImage || null);
   const [openDialog, setOpenDialog] = useState(false);
   const [switchToPreview, setSwitchToPreview] = useState(false);
 
   useEffect(() => {
-    if (isEditMode || blogDraft) {
+    if (isEditMode || reportDraft) {
       reset({
-        title: blogDraft?.title || '',
-        hashtags: blogDraft?.hashtags || [],
-        contents: blogDraft?.content || '',
+        title: reportDraft?.title || '',
+        hashtags: reportDraft?.hashtags || [],
+        contents: reportDraft?.content || '',
       });
-      setCoverImage(blogDraft?.coverImage || null);
+      setCoverImage(reportDraft?.coverImage || null);
     } else {
-      //todo: change this as this is not reseting when nvigating to create blog from edit blog
-      dispatch(resetCurrentBlog());
+      //todo: change this as this is not reseting when nvigating to create report from edit report
+      dispatch(resetCurrentReport());
       reset({
         title: '',
         hashtags: [],
@@ -109,12 +109,12 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
       });
       setCoverImage(null);
     }
-  }, [isEditMode, blogDraft, reset]);
+  }, [isEditMode, reportDraft, reset]);
 
   useEffect(() => {
     if (openDialog) {
       dispatch(
-        BlogActions.fetchImageFromUnsplash({
+        ReportActions.fetchImageFromUnsplash({
           count: 52,
           queryStrings: `${watchedTitle} ${watchedHashtags.join(' ')}` || 'tech',
         })
@@ -123,10 +123,10 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
   }, [openDialog]);
 
   useEffect(() => {
-    if (blogId) {
-      dispatch(BlogActions.getCurrentBlogById({ blogId }));
+    if (reportId) {
+      dispatch(ReportActions.getCurrentReportById({ reportId }));
     }
-  }, [dispatch, blogId]);
+  }, [dispatch, reportId]);
 
   const selectCoverImage = (url: string) => {
     setCoverImage(url);
@@ -135,7 +135,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
 
   const handlePreviewClick = () => {
     dispatch(
-      setCurrentBlog({
+      setCurrentReport({
         id: '0',
         title: watchedTitle,
         hashtags: watchedHashtags,
@@ -153,8 +153,8 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
 
   const onPublish = () => {
     dispatch(
-      BlogActions.blogSave({
-        id: blogDraft?.id || null,
+      ReportActions.reportSave({
+        id: reportDraft?.id || null,
         authorId: user?.id || '',
         authorName: user?.name || '',
         content: watchedContents,
@@ -165,8 +165,8 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
         title: watchedTitle,
       })
     );
-    navigate(`../blog/${blogDraft?.id}`);
-    dispatch(setBlogSuccessMessage('Blog published'));
+    navigate(`../report/${reportDraft?.id}`);
+    dispatch(setReportSuccessMessage('report published'));
   };
 
   const onSaveDraft = () => {
@@ -180,8 +180,8 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
     }
 
     dispatch(
-      BlogActions.blogSave({
-        id: blogDraft?.id || null,
+      ReportActions.reportSave({
+        id: reportDraft?.id || null,
         authorId: user?.id || '',
         authorName: user?.name || '',
         content: watchedContents,
@@ -272,32 +272,32 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
       setOpenDialog(false);
       setSwitchToPreview(false);
 
-      dispatch(resetCurrentBlog());
+      dispatch(resetCurrentReport());
       dispatch(setUnsplashImages(null));
       dispatch(setUnsplashErrorMessage(null));
       dispatch(setErrorMessage(null));
-      dispatch(setBlogSuccessMessage(null));
+      dispatch(setReportSuccessMessage(null));
     };
   }, [dispatch, reset]);
 
   useEffect(() => {
     return () => {
-      dispatch(resetCurrentBlog());
+      dispatch(resetCurrentReport());
     };
   }, [location.pathname]);
 
   return (
     <div>
       {switchToPreview ? (
-        <PreviewBlog
+        <PreviewReport
           title={watchedTitle}
           content={watchedContents}
           hashtags={watchedHashtags}
           coverImage={coverImage}
-          authorName={blogId ? blogDraft?.authorName || '' : user?.name || ''}
+          authorName={reportId ? reportDraft?.authorName || '' : user?.name || ''}
           createdAt={new Date()}
           onBackButtonClick={() => setSwitchToPreview(false)}
-          userAvatar={blogId ? blogDraft?.authorAvatar || '' : user?.profileImage || ''}
+          userAvatar={reportId ? reportDraft?.authorAvatar || '' : user?.profileImage || ''}
         />
       ) : (
         <Box
@@ -342,7 +342,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
               </Box>
 
               <InputBase
-                placeholder="Blog Title"
+                placeholder="report Title"
                 fullWidth
                 {...register('title', { required: 'Title is required' })}
                 sx={{
@@ -358,7 +358,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
               <HashtagsInput control={control} name="hashtags" min={2} max={8} />
 
               <InputBase
-                placeholder="Write your blog content in markdown..."
+                placeholder="Write your report content in markdown..."
                 multiline
                 minRows={10}
                 {...register('contents', {
@@ -397,7 +397,7 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
                 <Button
                   variant="contained"
                   onClick={handleSubmit(onPublish)}
-                  disabled={blogDraft?.isDraft ? !isValid : !isValid || !isDirty}
+                  disabled={reportDraft?.isDraft ? !isValid : !isValid || !isDirty}
                 >
                   Publish
                 </Button>
@@ -454,17 +454,17 @@ export const CreateOrEditBlog = ({ isEditMode = false }: ICreateOrEditBlogProps)
               type="error"
             />
           )}
-          {blogSuccessMessage && (
+          {reportSuccessMessage && (
             <Notification
-              onClear={() => dispatch(setBlogSuccessMessage(null))}
-              alertMessage={blogSuccessMessage}
+              onClear={() => dispatch(setReportSuccessMessage(null))}
+              alertMessage={reportSuccessMessage}
               type="success"
             />
           )}
-          {blogErrorMessage && (
+          {reportErrorMessage && (
             <Notification
               onClear={() => dispatch(setErrorMessage(null))}
-              alertMessage={blogErrorMessage}
+              alertMessage={reportErrorMessage}
               type="error"
             />
           )}

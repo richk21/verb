@@ -1,6 +1,6 @@
 import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { BlogTileContainer } from '../../components/BlogTileContainer/BlogTileContainer';
+import { ReportTileContainer } from '../../components/ReportTileContainer/ReportTileContainer';
 import { selectIsLoading } from '../../redux/user/userSelectors';
 
 export const Home = () => {
@@ -12,7 +12,7 @@ export const Home = () => {
 
   return (
     <div className="home-container">
-      <BlogTileContainer />
+      <ReportTileContainer />
     </div>
   );
 };

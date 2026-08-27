@@ -14,10 +14,10 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../app/utils/formatDate';
-import { BlogActions } from '../../redux/blog/blogActions';
+import { ReportActions } from '../../redux/report/reportActions';
 import { WarningModal } from '../Modal/Modal';
 
-interface BlogTileProps {
+interface ReportTileProps {
   id: string;
   title: string;
   hashtags: string[];
@@ -31,7 +31,7 @@ interface BlogTileProps {
   userAvatar: string;
 }
 
-export function BlogTile({
+export function ReportTile({
   id,
   title,
   hashtags,
@@ -43,7 +43,7 @@ export function BlogTile({
   isProfilePage = false,
   userId,
   userAvatar,
-}: BlogTileProps) {
+}: ReportTileProps) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -51,8 +51,8 @@ export function BlogTile({
 
   const onEditIconClick = (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation();
-    dispatch(BlogActions.getCurrentBlogById({ blogId: id }));
-    navigate(`../blog-edit/${id}`);
+    dispatch(ReportActions.getCurrentReportById({ reportId: id }));
+    navigate(`../edit-report/${id}`);
   };
 
   const onDeleteIconClick = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -61,12 +61,12 @@ export function BlogTile({
   };
 
   const handleDelete = () => {
-    dispatch(BlogActions.blogDelete({ blogId: id, userId }));
+    dispatch(ReportActions.reportDelete({ reportId: id, userId }));
   };
 
-  const onBlogTitleClick = () => {
-    dispatch(BlogActions.getBlogById({ blogId: id }));
-    navigate(`../blog/${id}`);
+  const onReportTitleClick = () => {
+    dispatch(ReportActions.getReportById({ reportId: id }));
+    navigate(`../report/${id}`);
   };
 
   const removeMarkdown = (text: string) => {
@@ -129,7 +129,7 @@ export function BlogTile({
               variant="h6"
               fontWeight={600}
               gutterBottom
-              onClick={onBlogTitleClick}
+              onClick={onReportTitleClick}
               sx={{ cursor: 'pointer', ':hover': { textDecoration: 'underline' } }}
             >
               {title}

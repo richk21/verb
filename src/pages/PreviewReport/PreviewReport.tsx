@@ -1,26 +1,30 @@
-import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
-import { useEffect } from 'react';
+import { ArrowBack } from '@mui/icons-material';
+import { Box, Chip, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
 import { utcToDmy } from '../../app/utils/dateUtcToDmy';
-import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
-import { BlogActions } from '../../redux/blog/blogActions';
-import { selectBlog } from '../../redux/blog/blogSelectors';
 
-export const BlogView = () => {
-  const dispatch = useDispatch();
-  const blogId = useParams().id || '';
+interface IPreviewReport {
+  title?: string;
+  content?: string;
+  hashtags?: string[];
+  coverImage?: string | null;
+  authorName?: string;
+  createdAt?: Date | null;
+  onBackButtonClick?: () => void;
+  userAvatar?: string;
+}
+
+export const PreviewReport = ({
+  title = '',
+  content = '',
+  hashtags = [],
+  coverImage = '',
+  authorName = '',
+  createdAt = null,
+  userAvatar = '',
+  onBackButtonClick,
+}: IPreviewReport) => {
   const theme = useTheme();
-  const blog = useSelector(selectBlog);
-
-  useEffect(() => {
-    if (blogId) {
-      dispatch(BlogActions.getBlogById({ blogId }));
-    }
-  }, [dispatch, blogId]);
-
-  if (!blog) return <LoadingOverlay />;
 
   return (
     <Box
@@ -34,13 +38,26 @@ export const BlogView = () => {
       }}
     >
       <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
-        {blog?.coverImage && (
+        <IconButton
+          sx={{
+            position: 'absolute',
+            top: 16,
+            left: -80,
+            zIndex: 2,
+            background: 'rgba(255,255,255,0.7)',
+          }}
+          onClick={() => onBackButtonClick && onBackButtonClick()}
+        >
+          <ArrowBack sx={{ fontSize: 28 }} />
+        </IconButton>
+
+        {coverImage && (
           <Box
             sx={{
               width: '100%',
               height: 300,
               bgcolor: theme.palette.grey[200],
-              backgroundImage: `url(${blog?.coverImage})`,
+              backgroundImage: `url(${coverImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderRadius: 3,
@@ -49,7 +66,7 @@ export const BlogView = () => {
         )}
       </Box>
       <Typography variant="h3" fontWeight={700} gutterBottom>
-        {blog?.title}
+        {title}
       </Typography>
       <Box
         sx={{
@@ -62,7 +79,7 @@ export const BlogView = () => {
         }}
       >
         <Stack direction="row" spacing={1} mb={3}>
-          {blog?.hashtags?.map((tag) => (
+          {hashtags?.map((tag) => (
             <Chip key={tag} label={`#${tag}`} />
           ))}
         </Stack>
@@ -76,7 +93,7 @@ export const BlogView = () => {
               minWidth: 160,
             }}
           >
-            {blog?.authorName && (
+            {authorName && (
               <span
                 style={{
                   color: theme.palette.text.secondary,
@@ -85,48 +102,26 @@ export const BlogView = () => {
                   lineHeight: 1.3,
                 }}
               >
-                By{' '}
-                <Link to={`/profile/${blog?.authorId}`}>
-                  <Typography
-                    sx={{
-                      display: 'inline',
-                      color: theme.palette.text.secondary,
-                      fontWeight: 500,
-                      fontSize: 15,
-                      lineHeight: 1.3,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {blog?.authorName}
-                  </Typography>
-                </Link>
+                By {authorName}
               </span>
             )}
-            {blog?.createdAt && (
+            {createdAt && (
               <span
                 style={{
                   color: theme.palette.text.secondary,
                   fontSize: 13,
                 }}
               >
-                {utcToDmy(new Date(blog?.createdAt || ''))}
+                {utcToDmy(createdAt)}
               </span>
             )}
           </Box>
-          <Link to={`/profile/${blog?.authorId}`}>
-            <Box
-              component="img"
-              src={blog?.authorAvatar}
-              alt="Author Avatar"
-              sx={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                cursor: 'pointer',
-              }}
-            />
-          </Link>
+          <Box
+            component="img"
+            src={userAvatar}
+            alt="Author Avatar"
+            sx={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
+          />
         </Stack>
       </Box>
       <Box
@@ -148,7 +143,7 @@ export const BlogView = () => {
           },
         }}
       >
-        <ReactMarkdown>{blog?.content}</ReactMarkdown>
+        <ReactMarkdown>{content}</ReactMarkdown>
       </Box>
     </Box>
   );

@@ -77,8 +77,8 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
               {user && (
                 <IconButton
                   color="inherit"
-                  onClick={() => navigate('/blog-post')}
-                  className={getIconClass('/blog-post', isDark)}
+                  onClick={() => navigate('/post-report')}
+                  className={getIconClass('/post-report', isDark)}
                 >
                   <PostAddIcon />
                 </IconButton>
