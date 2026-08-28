@@ -2,7 +2,6 @@ import { ThemeProvider } from '@emotion/react';
 import { Box, CssBaseline } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import './App.css';
 import { AppRoutes } from './app/AppRoutes';
 import { darkTheme, lightTheme } from './app/theme';
 import { Navbar } from './components/Navbar/Navbar';

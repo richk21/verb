@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { ReportStatus, statusColorMap, statusTextMap } from '../../app/interface/report';
 import { formatDate } from '../../app/utils/formatDate';
 import { ReportActions } from '../../redux/report/reportActions';
 import { WarningModal } from '../Modal/Modal';
@@ -25,7 +26,7 @@ interface ReportTileProps {
   coverImageUrl: string;
   author: string;
   datePublished: string;
-  isDraft?: boolean;
+  status?: ReportStatus;
   isProfilePage?: boolean;
   userId: string;
   userAvatar: string;
@@ -39,7 +40,7 @@ export function ReportTile({
   coverImageUrl,
   author,
   datePublished,
-  isDraft = false,
+  status = 'draft',
   isProfilePage = false,
   userId,
   userAvatar,
@@ -78,6 +79,7 @@ export function ReportTile({
   const cleanContent = removeMarkdown(content);
   const contentExcerpt = cleanContent.length > 200 ? cleanContent.slice(0, 200) + '...' : content;
   const date = formatDate(datePublished);
+  const statusText = statusTextMap[status];
 
   return (
     <Card
@@ -156,14 +158,14 @@ export function ReportTile({
                   style={{
                     borderRadius: '15px',
                     color: '#fff',
-                    background: isDraft ? theme.palette.grey[500] : theme.palette.success.main,
+                    background: statusColorMap[status],
                     fontSize: '0.75rem',
                     padding: '2px 8px',
                     display: 'inline-block',
                     marginBottom: '8px',
                   }}
                 >
-                  {isDraft ? 'Draft' : 'Published'}
+                  {statusText}
                 </Typography>
 
                 <EditIcon

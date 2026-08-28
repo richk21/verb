@@ -146,6 +146,7 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
         createdAt: new Date().toISOString(),
         isDraft: true,
         authorAvatar: user?.profileImage || '',
+        status: 'draft',
       })
     );
     setSwitchToPreview(true);
@@ -342,7 +343,7 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
               </Box>
 
               <InputBase
-                placeholder="report Title"
+                placeholder="Report Title"
                 fullWidth
                 {...register('title', { required: 'Title is required' })}
                 sx={{

@@ -20,7 +20,7 @@ export const ProfilePaginatedReportsContainer = () => {
   const reports = useSelector(selectAllUserReports);
   const totalReports = useSelector(selectAllUserReportsTotalCount);
   const totalPages = Math.ceil(totalReports / REPORTS_PER_PAGE);
-  const emptyText = userIdParam ? 'No reports yet.' : 'Such empty...write today!';
+  const emptyText = 'No reports found.';
 
   const [showDrafts, setShowDrafts] = useState(true);
   const [showPublished, setShowPublished] = useState(true);
@@ -65,6 +65,7 @@ export const ProfilePaginatedReportsContainer = () => {
       {reports?.length != 0 ? (
         <Box
           sx={{
+            width: '50%',
             display: 'flex',
             flexWrap: 'wrap',
             gap: 4,
@@ -84,7 +85,7 @@ export const ProfilePaginatedReportsContainer = () => {
               coverImageUrl={report.coverImage || ''}
               author={report.authorName}
               datePublished={report.createdAt}
-              isDraft={report.isDraft}
+              status={report.status}
               isProfilePage
               userId={userId}
               userAvatar={report.authorAvatar}

@@ -1,17 +1,20 @@
+import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import { Divider, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUser } from '../../redux/user/userSelectors';
-import { getIconClass } from '../Navbar/Navbar';
+import { getNavIconSx } from '../Navbar/Navbar';
 
 interface DropdownWithIconProps {
   onLogout: () => void;
   isDark: boolean;
+  currentPath: string;
 }
 
-export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
+export function DropdownWithIcon({ onLogout, isDark, currentPath }: DropdownWithIconProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const user = useSelector(selectUser);
   const open = Boolean(anchorEl);
@@ -20,24 +23,12 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     if (user) {
       setAnchorEl(event.currentTarget);
-    }
-    navigate('/login');
-    if (user) {
-      setAnchorEl(event.currentTarget);
     } else {
       navigate('/login');
     }
   };
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    if (user) {
-      setAnchorEl(event.currentTarget);
-    }
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setAnchorEl(null);
 
   const goToProfile = () => {
     handleClose();
@@ -57,8 +48,7 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
         aria-controls={open ? 'profile-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
-        onMouseEnter={handleOpenMenu}
-        className={getIconClass('/profile', isDark)}
+        sx={getNavIconSx(currentPath === '/profile', isDark)}
       >
         <PersonIcon />
       </IconButton>
@@ -68,40 +58,42 @@ export function DropdownWithIcon({ onLogout, isDark }: DropdownWithIconProps) {
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          MenuListProps={{
-            onMouseEnter: () => {},
-            onMouseLeave: handleClose,
-            'aria-labelledby': 'profile-button',
-            sx: {
-              bgcolor: 'background.paper',
-              borderRadius: 1,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              minWidth: 180,
-              m: 0,
-            },
-          }}
-          sx={{
-            mt: 1,
-            '.MuiMenuItem-root': {
-              fontWeight: '500',
-              color: 'text.primary',
-              transition: 'background-color 0.3s ease',
-              '&:hover': {
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-              },
-              '&.Mui-selected': {
-                bgcolor: 'primary.dark',
-                color: 'common.white',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          slotProps={{
+            paper: {
+              sx: {
+                mt: 1,
+                minWidth: 220,
+                border: '1px solid',
+                borderColor: 'divider',
+                boxShadow: '0px 4px 16px rgba(15,23,42,0.10)',
               },
             },
           }}
         >
-          <MenuItem onClick={goToProfile}>Profile</MenuItem>
-          <MenuItem onClick={logout}>Logout</MenuItem>
+          <Typography
+            variant="caption"
+            sx={{ display: 'block', px: 2, py: 1, color: 'text.secondary' }}
+          >
+            Signed in as
+          </Typography>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            sx={{ px: 2, pb: 1, wordBreak: 'break-word' }}
+          >
+            {user.email}
+          </Typography>
+          <Divider />
+          <MenuItem onClick={goToProfile} sx={{ gap: 1.5, py: 1.25 }}>
+            <PersonOutlineIcon fontSize="small" />
+            Profile
+          </MenuItem>
+          <MenuItem onClick={logout} sx={{ gap: 1.5, py: 1.25 }}>
+            <LogoutIcon fontSize="small" />
+            Logout
+          </MenuItem>
         </Menu>
       )}
     </>

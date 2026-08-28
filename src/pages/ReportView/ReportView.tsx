@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { utcToDmy } from '../../app/utils/dateUtcToDmy';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { ReviewActions } from '../../components/ReviewActions/ReviewActions';
+import { ReviewerCommentThread } from '../../components/ReviewCommentThread/ReviewCommentThread';
+import { ReviewStatusStepper } from '../../components/ReviewStatusStepper/ReviewStatusStepper';
 import { ReportActions } from '../../redux/report/reportActions';
 import { selectReport } from '../../redux/report/reportSelectors';
 
@@ -33,6 +36,8 @@ export const ReportView = () => {
         minHeight: '100vh',
       }}
     >
+      <ReviewStatusStepper status={report.status} />
+      <ReviewActions report={report} />
       <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
         {report?.coverImage && (
           <Box
@@ -150,6 +155,7 @@ export const ReportView = () => {
       >
         <ReactMarkdown>{report?.content}</ReactMarkdown>
       </Box>
+      <ReviewerCommentThread comments={report.reviewerComment} />
     </Box>
   );
 };

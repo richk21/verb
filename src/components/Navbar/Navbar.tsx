@@ -10,21 +10,35 @@ import { selectUser } from '../../redux/user/userSelectors';
 import { resetAuthToken, resetUser } from '../../redux/user/userSlice';
 import { DropdownWithIcon } from '../DropdownWithIcon/ProfileMenuButton';
 import { SearchBar } from '../SearchBar/SearchBar';
-import './navbar.scss';
 
 interface NavbarProps {
   isDark: boolean;
   onToggleTheme: () => void;
 }
 
-export const getIconClass = (path: string, isDark: boolean) => {
-  const isActive = location.pathname === path;
-  if (isDark) {
-    return isActive ? `nav-icon dark-active` : `nav-icon dark-inactive`;
-  } else {
-    return isActive ? `nav-icon light-active` : `nav-icon light-inactive`;
-  }
+/**
+ * Returns the sx object for a nav icon given whether it's the active route.
+ * Replaces the old className-based (.light-active/.dark-inactive/...)
+ * approach from navbar.scss with the same states expressed inline.
+ */
+export const getNavIconSx = (isActive: boolean, isDark: boolean) => {
+  const activeColor = isDark ? '#5C7CFA' : '#3454D1';
+  const activeBg = isDark ? 'rgba(92,124,250,0.16)' : 'rgba(52,84,209,0.08)';
+  const inactiveColor = isDark ? '#94A3B8' : '#64748B';
+
+  return {
+    transition: 'all 0.15s ease',
+    borderRadius: '6px',
+    padding: '8px',
+    color: isActive ? activeColor : inactiveColor,
+    backgroundColor: isActive ? activeBg : 'transparent',
+    '&:hover': {
+      color: activeColor,
+      backgroundColor: isDark ? 'rgba(92,124,250,0.10)' : 'rgba(52,84,209,0.06)',
+    },
+  };
 };
+
 export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,72 +46,82 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   const isRoot = location.pathname === '/';
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   const user = useSelector(selectUser);
+
   const handleLogout = () => {
     Cookies.remove('authToken');
     dispatch(resetUser());
     dispatch(resetAuthToken());
     navigate('../');
   };
+
   const logoColor = isDark ? '#fff' : '#000';
 
+  if (isAuthPage) return null;
+
   return (
-    <>
-      {!isAuthPage && (
-        <AppBar
-          position="fixed"
-          elevation={1}
-          color="default"
-          sx={{
-            boxShadow: 'none',
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-            padding: '12px 15px',
-          }}
-          className="navbar-container"
-        >
-          <Toolbar className="navbar-toolbar">
-            <Button onClick={() => navigate('/')} style={{ textTransform: 'none' }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, mb: 1.5, color: logoColor }}>
-                Verb
-              </Typography>
-            </Button>
+    <AppBar
+      position="fixed"
+      elevation={1}
+      color="default"
+      sx={{
+        boxShadow: 'none',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        padding: '12px 15px',
+      }}
+    >
+      <Toolbar
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          flex: '1 0 0',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Button onClick={() => navigate('/')} style={{ textTransform: 'none' }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1.5, color: logoColor }}>
+            Verb
+          </Typography>
+        </Button>
 
-            {isRoot && <SearchBar />}
+        {isRoot && <SearchBar />}
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <IconButton
-                color="inherit"
-                onClick={() => navigate('/')}
-                className={getIconClass('/', isDark)}
-              >
-                <HomeIcon />
-              </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <IconButton
+            color="inherit"
+            onClick={() => navigate('/')}
+            sx={getNavIconSx(location.pathname === '/', isDark)}
+          >
+            <HomeIcon />
+          </IconButton>
 
-              {user && (
-                <IconButton
-                  color="inherit"
-                  onClick={() => navigate('/post-report')}
-                  className={getIconClass('/post-report', isDark)}
-                >
-                  <PostAddIcon />
-                </IconButton>
-              )}
+          {user && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate('/post-report')}
+              sx={getNavIconSx(location.pathname === '/post-report', isDark)}
+            >
+              <PostAddIcon />
+            </IconButton>
+          )}
 
-              <DropdownWithIcon onLogout={handleLogout} isDark={isDark} />
+          <DropdownWithIcon
+            onLogout={handleLogout}
+            isDark={isDark}
+            currentPath={location.pathname}
+          />
 
-              <IconButton
-                color="inherit"
-                onClick={onToggleTheme}
-                aria-label="toggle theme"
-                className={'nav-icon'}
-              >
-                {isDark ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-      )}
-    </>
+          <IconButton
+            color="inherit"
+            onClick={onToggleTheme}
+            aria-label="toggle theme"
+            sx={getNavIconSx(false, isDark)}
+          >
+            {isDark ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }

@@ -61,7 +61,7 @@ export const ReportTileContainer = () => {
         gap: 2,
         maxWidth: 900,
         mx: 'auto',
-        padding: '24px 16px',
+        padding: '54px 16px',
       }}
     >
       {reports?.map((report, index) => {
@@ -77,7 +77,7 @@ export const ReportTileContainer = () => {
               coverImageUrl={report.coverImage || ''}
               author={report.authorName}
               datePublished={report.createdAt}
-              isDraft={report.isDraft}
+              status={report.status}
               isProfilePage={false}
               userId={userId}
               userAvatar={report.authorAvatar}
