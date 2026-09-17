@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+import { notificationReducer } from '../redux/notification/notificationSlice';
 import { reportReducer } from '../redux/report/reportSlice';
 import rootSaga from '../redux/rootSaga';
 import { userReducer } from '../redux/user/userSlice';
@@ -10,6 +11,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     report: reportReducer,
+    notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),

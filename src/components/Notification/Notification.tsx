@@ -25,7 +25,7 @@ export function Notification({ alertMessage, type, onClear }: IAlertProps) {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={10000}
+      autoHideDuration={5000}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >

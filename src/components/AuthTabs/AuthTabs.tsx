@@ -23,7 +23,7 @@ export const AuthTabs = () => {
           sx={{ minWidth: 0, px: 2, minHeight: 0 }}
         />
         <Tab
-          label="Signup"
+          label="Register"
           value={PathEnums.Signup}
           component={Link}
           to="/signup"

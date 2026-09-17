@@ -14,18 +14,13 @@ import { ClipboardEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { validateWordCount } from '../../app/utils/validateWordCount';
 import { HashtagsInput } from '../../components/HashtagsInput/HashtagsInput';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
-import { Notification } from '../../components/Notification/Notification';
 import { ReportActions } from '../../redux/report/reportActions';
 import {
   selectCurrentReport,
   selectIsLoading,
   selectIsUnsplashImagesLoading,
-  selectReportErrorMessage,
-  selectReportSuccessMessage,
-  selectReportUnsplashErrorMessage,
   selectUnsplashCoverImages,
 } from '../../redux/report/reportSelectors';
 import {
@@ -55,12 +50,9 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
   const theme = useTheme();
   const reportDraft = useSelector(selectCurrentReport);
   const user = useSelector(selectUser);
-  const reportSuccessMessage = useSelector(selectReportSuccessMessage);
-  const reportErrorMessage = useSelector(selectReportErrorMessage);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const isLoading = useSelector(selectIsLoading);
   const unsplashCoverImages = useSelector(selectUnsplashCoverImages);
-  const unsplashError = useSelector(selectReportUnsplashErrorMessage);
   const isUnsplashImagesLoading = useSelector(selectIsUnsplashImagesLoading);
 
   const {
@@ -68,10 +60,9 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
     handleSubmit,
     setValue,
     watch,
-    setError,
     control,
     reset,
-    formState: { errors, isValid, isDirty },
+    formState: { errors, isDirty },
   } = useForm<reportFormInputs>({
     mode: 'onChange',
     defaultValues: {
@@ -88,8 +79,17 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
   const watchedContents = watch('contents');
 
   const [coverImage, setCoverImage] = useState<string | null>(reportDraft?.coverImage || null);
+  const [initialCoverImage, setInitialCoverImage] = useState<string | null>(
+    reportDraft?.coverImage || null
+  );
   const [openDialog, setOpenDialog] = useState(false);
   const [switchToPreview, setSwitchToPreview] = useState(false);
+
+  const hasCoverImageChanged = coverImage !== initialCoverImage;
+
+  const hasChanges = isDirty || hasCoverImageChanged;
+
+  const hasRequiredContent = watchedTitle?.trim().length > 0 && watchedContents?.trim().length > 0;
 
   useEffect(() => {
     if (isEditMode || reportDraft) {
@@ -98,7 +98,10 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
         hashtags: reportDraft?.hashtags || [],
         contents: reportDraft?.content || '',
       });
-      setCoverImage(reportDraft?.coverImage || null);
+      const savedCoverImage = reportDraft?.coverImage || null;
+
+      setCoverImage(savedCoverImage);
+      setInitialCoverImage(savedCoverImage);
     } else {
       //todo: change this as this is not reseting when nvigating to create report from edit report
       dispatch(resetCurrentReport());
@@ -167,18 +170,11 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
       })
     );
     navigate(`../report/${reportDraft?.id}`);
-    dispatch(setReportSuccessMessage('report published'));
+    dispatch(setReportSuccessMessage('Report published'));
   };
 
   const onSaveDraft = () => {
-    if (!watchedContents || watchedContents.trim().length < 2) {
-      setError('contents', {
-        type: 'manual',
-        message: 'Content must be at least 100 words',
-      });
-      dispatch(setErrorMessage('Content must be at least 100 words for publishing'));
-      return;
-    }
+    if (!hasRequiredContent) return;
 
     dispatch(
       ReportActions.reportSave({
@@ -193,6 +189,16 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
         title: watchedTitle,
       })
     );
+
+    reset({
+      title: watchedTitle,
+      hashtags: watchedHashtags,
+      contents: watchedContents,
+    });
+
+    setInitialCoverImage(coverImage);
+
+    dispatch(setReportSuccessMessage('Report saved as draft'));
   };
 
   const uploadImageToImgur = async (file: File): Promise<string | null> => {
@@ -363,7 +369,7 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
                 multiline
                 minRows={10}
                 {...register('contents', {
-                  validate: validateWordCount,
+                  required: 'Content is required',
                 })}
                 onPaste={(e: ClipboardEvent) => onImagePaste(e)}
                 inputRef={editorRef}
@@ -390,7 +396,7 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
                 <Button
                   variant="contained"
                   onClick={onSaveDraft}
-                  disabled={!(watchedTitle && watchedContents) || !isDirty}
+                  disabled={!hasRequiredContent || !hasChanges}
                 >
                   Save as Draft
                 </Button>
@@ -398,7 +404,7 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
                 <Button
                   variant="contained"
                   onClick={handleSubmit(onPublish)}
-                  disabled={reportDraft?.isDraft ? !isValid : !isValid || !isDirty}
+                  disabled={!hasRequiredContent || reportDraft?.status !== 'draft'}
                 >
                   Publish
                 </Button>
@@ -448,27 +454,6 @@ export const CreateOrEditReport = ({ isEditMode = false }: ICreateOrEditreportPr
               </Dialog>
             </Box>
           </>
-          {unsplashError && (
-            <Notification
-              onClear={() => setUnsplashErrorMessage(null)}
-              alertMessage={unsplashError}
-              type="error"
-            />
-          )}
-          {reportSuccessMessage && (
-            <Notification
-              onClear={() => dispatch(setReportSuccessMessage(null))}
-              alertMessage={reportSuccessMessage}
-              type="success"
-            />
-          )}
-          {reportErrorMessage && (
-            <Notification
-              onClear={() => dispatch(setErrorMessage(null))}
-              alertMessage={reportErrorMessage}
-              type="error"
-            />
-          )}
         </Box>
       )}
     </div>

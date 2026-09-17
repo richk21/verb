@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './app/AppRoutes';
 import { darkTheme, lightTheme } from './app/theme';
 import { Navbar } from './components/Navbar/Navbar';
+import { GlobalNotification } from './components/Notification/GlobalNotification';
 
 export function App() {
   const [isDark, setIsDark] = useState(() => {
@@ -31,6 +32,7 @@ export function App() {
       <CssBaseline />
       <BrowserRouter>
         <Navbar isDark={isDark} onToggleTheme={toggleTheme} />
+        <GlobalNotification />
         <Box sx={{ paddingTop: '70px' }}>
           <AppRoutes />
         </Box>

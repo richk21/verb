@@ -8,15 +8,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { UserActions } from '../../redux/user/userActions';
-import {
-  selectUser,
-  selectUserErrorMessage,
-  selectUserSuccessMessage,
-} from '../../redux/user/userSelectors';
-import { setErrorMessage, setSuccessMessage } from '../../redux/user/userSlice';
+import { selectUser } from '../../redux/user/userSelectors';
 import { AuthLayout } from '../AuthTabs/AuthLayout';
 import { AuthTabs } from '../AuthTabs/AuthTabs';
-import { Notification } from '../Notification/Notification';
 
 export interface LoginFormInputs {
   email: string;
@@ -37,8 +31,6 @@ export function Login() {
     mode: 'onChange',
   });
   const user = useSelector(selectUser);
-  const loginErrorMessage = useSelector(selectUserErrorMessage);
-  const loginSuccessMessage = useSelector(selectUserSuccessMessage);
   const [showPassword, setShowPassword] = useState(false);
   const emailId = watch('email');
   const password = watch('password');
@@ -76,7 +68,7 @@ export function Login() {
           onClick={onSignUpClick}
           style={{ color: theme.palette.primary.main, cursor: 'pointer', fontWeight: 600 }}
         >
-          Sign up
+          Register here
         </span>
       </Typography>
       <Box
@@ -189,8 +181,8 @@ export function Login() {
               width: '100%',
               minWidth: '150px',
               padding: '0.5rem',
-              background: theme.palette.primary.contrastText,
-              color: '$white',
+              background: theme.palette.primary.main,
+              color: '#fff',
               border: 'none',
               fontSize: '0.875rem',
               cursor: 'pointer',
@@ -231,20 +223,6 @@ export function Login() {
           </Box>
         </form>
       </Box>
-      {loginErrorMessage && (
-        <Notification
-          onClear={() => dispatch(setErrorMessage(null))}
-          alertMessage={loginErrorMessage}
-          type="error"
-        />
-      )}
-      {loginSuccessMessage && (
-        <Notification
-          onClear={() => dispatch(setSuccessMessage(null))}
-          alertMessage={loginSuccessMessage}
-          type="success"
-        />
-      )}
     </AuthLayout>
   );
 }

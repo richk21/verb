@@ -5,14 +5,11 @@ import { CancelRounded, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, IconButton, InputAdornment, Typography, useTheme } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { UserActions } from '../../redux/user/userActions';
-import { selectUserErrorMessage, selectUserSuccessMessage } from '../../redux/user/userSelectors';
-import { setErrorMessage, setSuccessMessage } from '../../redux/user/userSlice';
 import { AuthLayout } from '../AuthTabs/AuthLayout';
 import { AuthTabs } from '../AuthTabs/AuthTabs';
-import { Notification } from '../Notification/Notification';
 
 export interface signupFormInputs {
   email: string;
@@ -26,8 +23,6 @@ export function Signup() {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const signupErrorMessage = useSelector(selectUserErrorMessage);
-  const signupSuccessMessage = useSelector(selectUserSuccessMessage);
   const {
     register,
     handleSubmit,
@@ -157,10 +152,7 @@ export function Signup() {
             },
           }}
           error={!!errors.organizationName}
-          helperText={
-            errors.organizationName?.message ||
-            "If this org already exists, you'll join it as a Contributor. If it's new, you'll become its first Admin."
-          }
+          helperText={errors.organizationName?.message}
         />
         <TextField
           className="email-field"
@@ -267,8 +259,8 @@ export function Signup() {
             width: '100%',
             minWidth: '150px',
             padding: '0.5rem',
-            background: theme.palette.primary.contrastText,
-            color: '$white',
+            background: theme.palette.primary.main,
+            color: '#fff',
             border: 'none',
             fontSize: '0.875rem',
             cursor: 'pointer',
@@ -309,25 +301,11 @@ export function Signup() {
             />
           ) : (
             <Typography variant="body2" color="text.secondary">
-              Enter an organization name above to sign up with Google
+              Enter an organization to sign up with Google
             </Typography>
           )}
         </Box>
       </form>
-      {signupErrorMessage && (
-        <Notification
-          onClear={() => dispatch(setErrorMessage(null))}
-          alertMessage={signupErrorMessage}
-          type="error"
-        />
-      )}
-      {signupSuccessMessage && (
-        <Notification
-          onClear={() => dispatch(setSuccessMessage(null))}
-          alertMessage={signupSuccessMessage}
-          type="success"
-        />
-      )}
     </AuthLayout>
   );
 }

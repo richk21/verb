@@ -20,6 +20,7 @@ import {
 import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUnsplashImagesResponse } from '../../app/interface/response/unsplashImagesResponse';
+import { addNotification } from '../notification/notificationSlice';
 import { reportService } from './reportService';
 import {
   setAllReports,
@@ -30,11 +31,8 @@ import {
   setErrorMessage,
   setLoading,
   setReport,
-  setReportSuccessMessage,
-  setUnsplashErrorMessage,
   setUnsplashImages,
   setUnsplashImagesLoadingState,
-  setUnsplashSuccessMessage,
 } from './reportSlice';
 
 export function* saveReport(action: { type: string; payload: IReport }) {
@@ -42,7 +40,7 @@ export function* saveReport(action: { type: string; payload: IReport }) {
   const { isDraft } = action.payload;
   try {
     const response: AxiosResponse<IReport> = yield call(reportService.SaveReport, action.payload);
-    if (response.status == 201) {
+    if (response.status === 200 || response.status === 201) {
       yield put(setCurrentReport(response.data));
       yield put(setErrorMessage(null));
       if (action.payload.id === null) {
@@ -50,12 +48,17 @@ export function* saveReport(action: { type: string; payload: IReport }) {
         yield call(getReportById, { type: types.GET_REPORT_BY_ID, payload: request });
       }
       yield put(
-        setReportSuccessMessage(isDraft ? REPORT_SAVE_SUCCESS_MESSAGE : REPORT_PUBLISHED_MESSAGE)
+        addNotification({
+          message: isDraft ? REPORT_SAVE_SUCCESS_MESSAGE : REPORT_PUBLISHED_MESSAGE,
+          type: 'success',
+        })
       );
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -71,12 +74,14 @@ export function* getAllReports(action: { type: string; payload: { page: number; 
     if (response.status == 200) {
       yield put(setAllReports({ reports: response.data.reports, page: action.payload.page }));
       yield put(setAllReportstotalCount(response.data.total));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setErrorMessage(err.response?.data.message || 'An error occurred while getting reports')
+      addNotification({
+        message: err.response?.data.message || 'An error occurred while getting reports',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setLoading(false));
@@ -93,12 +98,14 @@ export function* getAllUserReports(action: { type: string; payload: IGetAllUserR
     if (response.status == 200) {
       yield put(setAllUserReports(response.data.reports));
       yield put(setAllUserReportsTotalCount(response.data.total));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setErrorMessage(err.response?.data.message || 'An error occurred while getting reports')
+      addNotification({
+        message: err.response?.data.message || 'An error occurred while getting reports',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setLoading(false));
@@ -114,12 +121,14 @@ export function* getCurrentReportById(action: { type: string; payload: IRequestR
     );
     if (response.status == 200) {
       yield put(setCurrentReport(response.data));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setErrorMessage(err.response?.data.message || 'An error occurred while getting reports')
+      addNotification({
+        message: err.response?.data.message || 'An error occurred while getting reports',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setLoading(false));
@@ -135,12 +144,14 @@ export function* getReportById(action: { type: string; payload: IRequestReportBy
     );
     if (response.status == 200) {
       yield put(setReport(response.data));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setErrorMessage(err.response?.data.message || 'An error occurred while getting reports')
+      addNotification({
+        message: err.response?.data.message || 'An error occurred while getting reports',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setLoading(false));
@@ -164,12 +175,20 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
           limit: REPORTS_PER_PAGE,
         },
       });
-      yield put(setReportSuccessMessage('Report deleted.'));
+      yield put(
+        addNotification({
+          message: 'Report deleted.',
+          type: 'success',
+        })
+      );
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setErrorMessage(err.response?.data.message || 'An error occurred while deleting report')
+      addNotification({
+        message: err.response?.data.message || 'An error occurred while deleting report',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setLoading(false));
@@ -186,12 +205,20 @@ export function* fetchImageFromUnsplash(action: { type: string; payload: IUnspla
     if (response.status == 200 && response.data?.images) {
       yield put(setErrorMessage(null));
       yield put(setUnsplashImages(response.data?.images));
-      yield put(setUnsplashSuccessMessage('Unsplash images are ready!'));
+      yield put(
+        addNotification({
+          message: 'Unsplash images are ready!',
+          type: 'success',
+        })
+      );
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      setUnsplashErrorMessage(err.response?.data.message || 'Failed to fetch images from Unsplash')
+      addNotification({
+        message: err.response?.data.message || 'Failed to fetch images from Unsplash',
+        type: 'error',
+      })
     );
   } finally {
     yield put(setUnsplashImagesLoadingState(false));
@@ -202,10 +229,20 @@ export function* submitForReview(action: { type: string; payload: ISubmitForRevi
   try {
     const response: AxiosResponse = yield call(reportService.submitForReview, action.payload);
     yield put(setReport(response.data));
-    yield put(setReportSuccessMessage('Submitted for review'));
+    yield put(
+      addNotification({
+        message: 'Submitted for review',
+        type: 'success',
+      })
+    );
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-    yield put(setErrorMessage(err.response?.data.message || 'Failed to submit for review'));
+    yield put(
+      addNotification({
+        message: err.response?.data.message || 'Failed to submit for review',
+        type: 'error',
+      })
+    );
   }
 }
 
@@ -213,10 +250,20 @@ export function* approveReport(action: { type: string; payload: IApproveReportRe
   try {
     const response: AxiosResponse = yield call(reportService.approveReport, action.payload);
     yield put(setReport(response.data));
-    yield put(setReportSuccessMessage('Report has been approved'));
+    yield put(
+      addNotification({
+        message: 'Report has been approved',
+        type: 'success',
+      })
+    );
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-    yield put(setErrorMessage(err.response?.data.message || 'Failed to approve report'));
+    yield put(
+      addNotification({
+        message: err.response?.data.message || 'Failed to approve report',
+        type: 'error',
+      })
+    );
   }
 }
 
@@ -224,10 +271,20 @@ export function* requestChanges(action: { type: string; payload: IRequestChanges
   try {
     const response: AxiosResponse = yield call(reportService.requestChanges, action.payload);
     yield put(setReport(response.data));
-    yield put(setReportSuccessMessage('Changes requested for report'));
+    yield put(
+      addNotification({
+        message: 'Changes requested for report',
+        type: 'success',
+      })
+    );
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-    yield put(setErrorMessage(err.response?.data.message || 'Failed to request changes'));
+    yield put(
+      addNotification({
+        message: err.response?.data.message || 'Failed to request changes',
+        type: 'error',
+      })
+    );
   }
 }
 
@@ -235,10 +292,20 @@ export function* publishReportFinal(action: { type: string; payload: IPublishRep
   try {
     const response: AxiosResponse = yield call(reportService.publishReportFinal, action.payload);
     yield put(setReport(response.data));
-    yield put(setReportSuccessMessage('Report has been published'));
+    yield put(
+      addNotification({
+        message: 'Report has been published',
+        type: 'success',
+      })
+    );
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-    yield put(setErrorMessage(err.response?.data.message || 'Failed to publish report'));
+    yield put(
+      addNotification({
+        message: err.response?.data.message || 'Failed to publish report',
+        type: 'error',
+      })
+    );
   }
 }
 
@@ -246,10 +313,20 @@ export function* addReviewComment(action: { type: string; payload: IAddCommentRe
   try {
     const response: AxiosResponse = yield call(reportService.addReviewComment, action.payload);
     yield put(setReport(response.data));
-    yield put(setReportSuccessMessage('Comment added'));
+    yield put(
+      addNotification({
+        message: 'Comment added',
+        type: 'success',
+      })
+    );
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
-    yield put(setErrorMessage(err.response?.data.message || 'Failed to add the comment'));
+    yield put(
+      addNotification({
+        message: err.response?.data.message || 'Failed to add the comment',
+        type: 'error',
+      })
+    );
   }
 }
 

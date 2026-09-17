@@ -7,14 +7,9 @@ import { ILoginRequest } from '../../app/interface/request/loginRequest';
 import { ISignupRequest } from '../../app/interface/request/signupRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUser } from '../../app/interface/user';
+import { addNotification } from '../notification/notificationSlice';
 import { userService } from './userService';
-import {
-  setErrorMessage,
-  setLoading,
-  setSuccessMessage,
-  setUser,
-  setViewableUserProfile,
-} from './userSlice';
+import { setLoading, setUser, setViewableUserProfile } from './userSlice';
 
 export function* signUpUser(action: { type: string; payload: ISignupRequest }) {
   yield put(setLoading(true));
@@ -26,13 +21,13 @@ export function* signUpUser(action: { type: string; payload: ISignupRequest }) {
     if (response.status == 201) {
       Cookies.set('token', response.data.token, { expires: 2, secure: true, sameSite: 'strict' });
       yield put(setUser(response.data.user));
-      yield put(setSuccessMessage('Account created'));
-      yield put(setErrorMessage(null));
+      yield put(addNotification({ message: 'Signup successful', type: 'success' }));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -52,13 +47,13 @@ export function* loginUser(action: { type: string; payload: ILoginRequest }) {
         sameSite: 'strict',
       });
       yield put(setUser(response.data.user));
-      yield put(setSuccessMessage('Login successful'));
-      yield put(setErrorMessage(null));
+      yield put(addNotification({ message: 'Login successful', type: 'success' }));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -78,13 +73,13 @@ export function* googleAuthUser(action: { type: string; payload: IGoogleAuthRequ
         sameSite: 'strict',
       });
       yield put(setUser(response.data.user));
-      yield put(setSuccessMessage('Google login successful.'));
-      yield put(setErrorMessage(null));
+      yield put(addNotification({ message: 'Google login successful', type: 'success' }));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -99,12 +94,12 @@ export function* getUserProfile(action: { type: string; payload: string }) {
     );
     if (response.status == 200 || response.status == 304) {
       yield put(setUser(response.data.user));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -121,12 +116,12 @@ export function* getViewableUserProfile(action: { type: string; payload: string 
     console.log('saga', response.data.user);
     if (response.status == 200 || response.status == 304) {
       yield put(setViewableUserProfile(response.data.user));
-      yield put(setErrorMessage(null));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
@@ -141,13 +136,13 @@ export function* updateUserInfo(action: { type: string; payload: FormData }) {
     );
     if (response.status == 200) {
       yield put(setUser(response.data.user));
-      yield put(setErrorMessage(null));
-      yield put(setSuccessMessage('Profile updated successfully'));
+      yield put(addNotification({ message: 'Profile updated successfully', type: 'success' }));
     }
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
-    yield put(setSuccessMessage(null));
-    yield put(setErrorMessage(err.response?.data.message || 'An error occurred'));
+    yield put(
+      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+    );
   } finally {
     yield put(setLoading(false));
   }
