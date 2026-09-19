@@ -6,6 +6,7 @@ import { CreateOrEditReport } from '../pages/CreateReport/CreateReport';
 import { Home } from '../pages/Home/Home';
 import { LandingPage } from '../pages/LandingPage/LandingPage';
 import { LoginAndSignUp } from '../pages/LoginAndSignupPage/LoginAndSignUp';
+import { NotificationsPage } from '../pages/NotificationsPage/NotificationsPage';
 import { PasswordReset } from '../pages/PasswordReset/PasswordReset';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import { ReportView } from '../pages/ReportView/ReportView';
@@ -26,6 +27,7 @@ export function AppRoutes() {
 
       {/* protected routes */}
       <Route element={<ProtectedRoute />}>
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:userId" element={<ProfilePage isViewMode />} />
         <Route path="/post-report" element={<CreateOrEditReport />} />

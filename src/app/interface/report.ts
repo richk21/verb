@@ -1,4 +1,11 @@
-export type ReportStatus = 'draft' | 'under_review' | 'approved' | 'published';
+export const ReportStatus = {
+  draft: 'draft',
+  under_review: 'under_review',
+  approved: 'approved',
+  published: 'published',
+} as const;
+
+export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus];
 
 export const statusTextMap: Record<ReportStatus, string> = {
   draft: 'Draft',
@@ -40,6 +47,7 @@ export interface IReport {
   authorAvatar: string;
   status: ReportStatus;
   reviewerId?: string | null;
+  reviewerName?: string | null;
   reviewerComment?: IReviewerComment[];
   timeline?: ITimelineEvent[];
 }

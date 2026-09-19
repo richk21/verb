@@ -1,3 +1,4 @@
+import { IOrgMember } from '../../app/interface/notification';
 import { IReport } from '../../app/interface/report';
 import { IReportDeleteRequest } from '../../app/interface/request/deleteReportRequest';
 import { IGetAllUserReportsRequest } from '../../app/interface/request/getAllUserReportsRequest';
@@ -17,6 +18,7 @@ import {
   DELETE_REPORT,
   GET_ALL_REPORTS,
   GET_ALL_USER_REPORTS,
+  GET_ORG_MEMBERS,
   GET_REPORT_BY_ID,
   PUBLISH_REPORT_FINAL,
   REPORT_SAVE,
@@ -86,6 +88,13 @@ export class reportService {
 
   static addReviewComment = async (request: IAddCommentRequest) => {
     const response = await api.post(ADD_REVIEW_COMMENT, request);
+    return response;
+  };
+
+  static getOrgMembers = async (roles: string[] = ['reviewer', 'admin']) => {
+    const response = await api.get<{ members: IOrgMember[] }>(GET_ORG_MEMBERS, {
+      params: { roles: roles.join(',') },
+    });
     return response;
   };
 }

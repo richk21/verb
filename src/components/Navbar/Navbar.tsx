@@ -1,11 +1,15 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import HomeIcon from '@mui/icons-material/Home';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Badge, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import Cookies from 'js-cookie';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { NotificationActions } from '../../redux/notification/notificationActions';
+import { selectUnreadCount } from '../../redux/notification/notificationSelectors';
 import { selectUser } from '../../redux/user/userSelectors';
 import { resetAuthToken, resetUser } from '../../redux/user/userSlice';
 import { DropdownWithIcon } from '../DropdownWithIcon/ProfileMenuButton';
@@ -46,6 +50,7 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   const isRoot = location.pathname === '/';
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
   const user = useSelector(selectUser);
+  const unreadCount = useSelector(selectUnreadCount);
 
   const handleLogout = () => {
     Cookies.remove('authToken');
@@ -53,6 +58,10 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
     dispatch(resetAuthToken());
     navigate('../');
   };
+
+  useEffect(() => {
+    if (user) dispatch(NotificationActions.getUnreadCount());
+  }, [user, dispatch, location.pathname]);
 
   const logoColor = isDark ? '#fff' : '#000';
 
@@ -103,6 +112,18 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
               sx={getNavIconSx(location.pathname === '/post-report', isDark)}
             >
               <PostAddIcon />
+            </IconButton>
+          )}
+
+          {user && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate('/notifications')}
+              sx={getNavIconSx(location.pathname === '/notifications', isDark)}
+            >
+              <Badge badgeContent={unreadCount} color="error" max={9}>
+                <NotificationsOutlinedIcon />
+              </Badge>
             </IconButton>
           )}
 

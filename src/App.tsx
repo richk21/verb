@@ -1,13 +1,16 @@
 import { ThemeProvider } from '@emotion/react';
 import { Box, CssBaseline } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './app/AppRoutes';
 import { darkTheme, lightTheme } from './app/theme';
+import { GlobalAlertToast } from './components/AlertToast/GlobalAlertToast';
 import { Navbar } from './components/Navbar/Navbar';
-import { GlobalNotification } from './components/Notification/GlobalNotification';
+import { NotificationActions } from './redux/notification/notificationActions';
 
 export function App() {
+  const dispatch = useDispatch();
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('verb_theme');
     if (!saved) {
@@ -27,12 +30,16 @@ export function App() {
     });
   };
 
+  useEffect(() => {
+    dispatch(NotificationActions.getNotifications({ page: 1 }));
+  }, [dispatch]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
         <Navbar isDark={isDark} onToggleTheme={toggleTheme} />
-        <GlobalNotification />
+        <GlobalAlertToast />
         <Box sx={{ paddingTop: '70px' }}>
           <AppRoutes />
         </Box>

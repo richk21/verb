@@ -1,5 +1,6 @@
 export interface ISubmitForReviewRequest {
   id: string;
+  reviewerId: string;
 }
 
 export interface IApproveReportRequest {

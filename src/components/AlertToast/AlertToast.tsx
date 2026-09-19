@@ -7,7 +7,7 @@ interface IAlertProps {
   onClear: () => void;
 }
 
-export function Notification({ alertMessage, type, onClear }: IAlertProps) {
+export function AlertToast({ alertMessage, type, onClear }: IAlertProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

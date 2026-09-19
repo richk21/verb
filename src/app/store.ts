@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+import { alertToastReducer } from '../redux/alertToast/alertToastSlice';
 import { notificationReducer } from '../redux/notification/notificationSlice';
 import { reportReducer } from '../redux/report/reportSlice';
 import rootSaga from '../redux/rootSaga';
@@ -11,6 +12,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     report: reportReducer,
+    alertToast: alertToastReducer,
     notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -20,7 +20,7 @@ import {
 import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUnsplashImagesResponse } from '../../app/interface/response/unsplashImagesResponse';
-import { addNotification } from '../notification/notificationSlice';
+import { addAlertToast } from '../alertToast/alertToastSlice';
 import { reportService } from './reportService';
 import {
   setAllReports,
@@ -48,7 +48,7 @@ export function* saveReport(action: { type: string; payload: IReport }) {
         yield call(getReportById, { type: types.GET_REPORT_BY_ID, payload: request });
       }
       yield put(
-        addNotification({
+        addAlertToast({
           message: isDraft ? REPORT_SAVE_SUCCESS_MESSAGE : REPORT_PUBLISHED_MESSAGE,
           type: 'success',
         })
@@ -57,7 +57,7 @@ export function* saveReport(action: { type: string; payload: IReport }) {
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({ message: err.response?.data.message || 'An error occurred', type: 'error' })
+      addAlertToast({ message: err.response?.data.message || 'An error occurred', type: 'error' })
     );
   } finally {
     yield put(setLoading(false));
@@ -78,7 +78,7 @@ export function* getAllReports(action: { type: string; payload: { page: number; 
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'An error occurred while getting reports',
         type: 'error',
       })
@@ -102,7 +102,7 @@ export function* getAllUserReports(action: { type: string; payload: IGetAllUserR
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'An error occurred while getting reports',
         type: 'error',
       })
@@ -125,7 +125,7 @@ export function* getCurrentReportById(action: { type: string; payload: IRequestR
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'An error occurred while getting reports',
         type: 'error',
       })
@@ -148,7 +148,7 @@ export function* getReportById(action: { type: string; payload: IRequestReportBy
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'An error occurred while getting reports',
         type: 'error',
       })
@@ -176,7 +176,7 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
         },
       });
       yield put(
-        addNotification({
+        addAlertToast({
           message: 'Report deleted.',
           type: 'success',
         })
@@ -185,7 +185,7 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'An error occurred while deleting report',
         type: 'error',
       })
@@ -206,7 +206,7 @@ export function* fetchImageFromUnsplash(action: { type: string; payload: IUnspla
       yield put(setErrorMessage(null));
       yield put(setUnsplashImages(response.data?.images));
       yield put(
-        addNotification({
+        addAlertToast({
           message: 'Unsplash images are ready!',
           type: 'success',
         })
@@ -215,7 +215,7 @@ export function* fetchImageFromUnsplash(action: { type: string; payload: IUnspla
   } catch (error) {
     const err = error as AxiosError<ErrorResponse>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to fetch images from Unsplash',
         type: 'error',
       })
@@ -230,7 +230,7 @@ export function* submitForReview(action: { type: string; payload: ISubmitForRevi
     const response: AxiosResponse = yield call(reportService.submitForReview, action.payload);
     yield put(setReport(response.data));
     yield put(
-      addNotification({
+      addAlertToast({
         message: 'Submitted for review',
         type: 'success',
       })
@@ -238,7 +238,7 @@ export function* submitForReview(action: { type: string; payload: ISubmitForRevi
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to submit for review',
         type: 'error',
       })
@@ -251,7 +251,7 @@ export function* approveReport(action: { type: string; payload: IApproveReportRe
     const response: AxiosResponse = yield call(reportService.approveReport, action.payload);
     yield put(setReport(response.data));
     yield put(
-      addNotification({
+      addAlertToast({
         message: 'Report has been approved',
         type: 'success',
       })
@@ -259,7 +259,7 @@ export function* approveReport(action: { type: string; payload: IApproveReportRe
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to approve report',
         type: 'error',
       })
@@ -272,7 +272,7 @@ export function* requestChanges(action: { type: string; payload: IRequestChanges
     const response: AxiosResponse = yield call(reportService.requestChanges, action.payload);
     yield put(setReport(response.data));
     yield put(
-      addNotification({
+      addAlertToast({
         message: 'Changes requested for report',
         type: 'success',
       })
@@ -280,7 +280,7 @@ export function* requestChanges(action: { type: string; payload: IRequestChanges
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to request changes',
         type: 'error',
       })
@@ -293,7 +293,7 @@ export function* publishReportFinal(action: { type: string; payload: IPublishRep
     const response: AxiosResponse = yield call(reportService.publishReportFinal, action.payload);
     yield put(setReport(response.data));
     yield put(
-      addNotification({
+      addAlertToast({
         message: 'Report has been published',
         type: 'success',
       })
@@ -301,7 +301,7 @@ export function* publishReportFinal(action: { type: string; payload: IPublishRep
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to publish report',
         type: 'error',
       })
@@ -314,7 +314,7 @@ export function* addReviewComment(action: { type: string; payload: IAddCommentRe
     const response: AxiosResponse = yield call(reportService.addReviewComment, action.payload);
     yield put(setReport(response.data));
     yield put(
-      addNotification({
+      addAlertToast({
         message: 'Comment added',
         type: 'success',
       })
@@ -322,7 +322,7 @@ export function* addReviewComment(action: { type: string; payload: IAddCommentRe
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
     yield put(
-      addNotification({
+      addAlertToast({
         message: err.response?.data.message || 'Failed to add the comment',
         type: 'error',
       })
