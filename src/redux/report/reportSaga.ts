@@ -14,6 +14,7 @@ import {
   IAddCommentRequest,
   IApproveReportRequest,
   IPublishReportRequest,
+  IReplyToCommentRequest,
   IRequestChangesRequest,
   ISubmitForReviewRequest,
 } from '../../app/interface/request/reviewWorkflowRequest';
@@ -330,6 +331,27 @@ export function* addReviewComment(action: { type: string; payload: IAddCommentRe
   }
 }
 
+export function* replyToComment(action: { type: string; payload: IReplyToCommentRequest }) {
+  try {
+    const response: AxiosResponse = yield call(reportService.replyToComment, action.payload);
+    yield put(setReport(response.data));
+    yield put(
+      addAlertToast({
+        message: 'Reply sent',
+        type: 'success',
+      })
+    );
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    yield put(
+      addAlertToast({
+        message: err.response?.data.message || 'Failed to send reply',
+        type: 'error',
+      })
+    );
+  }
+}
+
 export function* reportSaga() {
   yield takeLatest(types.REPORT_SAVE, saveReport);
   yield takeLatest(types.GET_ALL_REPORTS, getAllReports);
@@ -343,4 +365,5 @@ export function* reportSaga() {
   yield takeLatest(types.REQUEST_CHANGES, requestChanges);
   yield takeLatest(types.PUBLISH_REPORT_FINAL, publishReportFinal);
   yield takeLatest(types.ADD_REVIEW_COMMENT, addReviewComment);
+  yield takeLatest(types.ADD_REVIEW_REPLY, replyToComment);
 }

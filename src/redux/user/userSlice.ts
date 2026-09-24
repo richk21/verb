@@ -13,7 +13,7 @@ interface UserState {
 const initialState: UserState = {
   user: null,
   authToken: null,
-  isLoading: false,
+  isLoading: true,
   errorMessage: null,
   successMessage: null,
   viewableUserProfile: null,
@@ -50,5 +50,14 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, resetUser, setLoading, setErrorMessage, setAuthToken, resetAuthToken, setSuccessMessage, setViewableUserProfile } = userSlice.actions;
+export const {
+  setUser,
+  resetUser,
+  setLoading,
+  setErrorMessage,
+  setAuthToken,
+  resetAuthToken,
+  setSuccessMessage,
+  setViewableUserProfile,
+} = userSlice.actions;
 export const userReducer = userSlice.reducer;

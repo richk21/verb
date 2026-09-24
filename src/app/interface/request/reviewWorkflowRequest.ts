@@ -20,3 +20,9 @@ export interface IAddCommentRequest {
   id: string;
   comment: string;
 }
+
+export interface IReplyToCommentRequest {
+  id: string;
+  commentId: string;
+  text: string;
+}

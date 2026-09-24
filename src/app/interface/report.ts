@@ -20,12 +20,22 @@ export const statusColorMap: Record<ReportStatus, string> = {
   approved: '#0f9d58',
   published: '#2563eb',
 };
+export interface ICommentReply {
+  id: string;
+  authorId: string;
+  authorName: string;
+  text: string;
+  createdAt: string;
+}
+
 export interface IReviewerComment {
   id: string;
   authorId: string;
   authorName: string;
-  comment: string;
+  comment?: string;
+  text?: string;
   createdAt: string;
+  replies?: ICommentReply[];
 }
 
 export interface ITimelineEvent {
@@ -48,6 +58,7 @@ export interface IReport {
   status: ReportStatus;
   reviewerId?: string | null;
   reviewerName?: string | null;
+  reviewerComments?: IReviewerComment[];
   reviewerComment?: IReviewerComment[];
   timeline?: ITimelineEvent[];
 }

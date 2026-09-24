@@ -7,6 +7,7 @@ import {
   IAddCommentRequest,
   IApproveReportRequest,
   IPublishReportRequest,
+  IReplyToCommentRequest,
   IRequestChangesRequest,
   ISubmitForReviewRequest,
 } from '../../app/interface/request/reviewWorkflowRequest';
@@ -14,6 +15,7 @@ import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import api from '../axiosInstance';
 import {
   ADD_REVIEW_COMMENT,
+  ADD_REVIEW_REPLY,
   APPROVE_REPORT,
   DELETE_REPORT,
   GET_ALL_REPORTS,
@@ -88,6 +90,11 @@ export class reportService {
 
   static addReviewComment = async (request: IAddCommentRequest) => {
     const response = await api.post(ADD_REVIEW_COMMENT, request);
+    return response;
+  };
+
+  static replyToComment = async (request: IReplyToCommentRequest) => {
+    const response = await api.post(ADD_REVIEW_REPLY, request);
     return response;
   };
 

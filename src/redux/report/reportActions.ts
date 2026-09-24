@@ -26,4 +26,7 @@ export class ReportActions {
   static requestChanges = createAction<IRequestChangesRequest>(types.REQUEST_CHANGES);
   static publishReportFinal = createAction<IPublishReportRequest>(types.PUBLISH_REPORT_FINAL);
   static addReviewComment = createAction<IAddCommentRequest>(types.ADD_REVIEW_COMMENT);
+  static replyToComment = createAction<{ id: string; commentId: string; text: string }>(
+    types.ADD_REVIEW_REPLY
+  );
 }

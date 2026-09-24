@@ -25,10 +25,12 @@ export const ReportView = () => {
 
   if (!report) return <LoadingOverlay />;
 
+  const comments = report.reviewerComments ?? report.reviewerComment ?? [];
+
   return (
     <Box
       sx={{
-        maxWidth: 900,
+        maxWidth: 1280,
         mx: 'auto',
         p: 3,
         bgcolor: theme.palette.background.default,
@@ -38,124 +40,132 @@ export const ReportView = () => {
     >
       <ReviewStatusStepper status={report.status} />
       <ReviewActions report={report} />
-      <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
-        {report?.coverImage && (
-          <Box
-            sx={{
-              width: '100%',
-              height: 300,
-              bgcolor: theme.palette.grey[200],
-              backgroundImage: `url(${report?.coverImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              borderRadius: 3,
-            }}
-          />
-        )}
-      </Box>
-      <Typography variant="h3" fontWeight={700} gutterBottom>
-        {report?.title}
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: 3,
-          flexWrap: 'wrap',
-          gap: 1,
-        }}
-      >
-        <Stack direction="row" spacing={1} mb={3}>
-          {report?.hashtags?.map((tag) => (
-            <Chip key={tag} label={`#${tag}`} />
-          ))}
-        </Stack>
-        <Stack direction="row" spacing={1} mb={3} mr={2}>
+
+      <Box sx={{ display: 'flex', gap: 3, alignItems: 'flex-start', flexDirection: { xs: 'column', lg: 'row' } }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ position: 'relative', width: '100%', pt: 3, mb: 1 }}>
+            {report?.coverImage && (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: 300,
+                  bgcolor: theme.palette.grey[200],
+                  backgroundImage: `url(${report?.coverImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  borderRadius: 3,
+                }}
+              />
+            )}
+          </Box>
+          <Typography variant="h3" fontWeight={700} gutterBottom>
+            {report?.title}
+          </Typography>
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: { xs: 'flex-start', sm: 'flex-end' },
-              ml: 2,
-              minWidth: 160,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mb: 3,
+              flexWrap: 'wrap',
+              gap: 1,
             }}
           >
-            {report?.authorName && (
-              <span
-                style={{
-                  color: theme.palette.text.secondary,
-                  fontWeight: 500,
-                  fontSize: 15,
-                  lineHeight: 1.3,
+            <Stack direction="row" spacing={1} mb={3}>
+              {report?.hashtags?.map((tag) => (
+                <Chip key={tag} label={`#${tag}`} />
+              ))}
+            </Stack>
+            <Stack direction="row" spacing={1} mb={3} mr={2}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: { xs: 'flex-start', sm: 'flex-end' },
+                  ml: 2,
+                  minWidth: 160,
                 }}
               >
-                By{' '}
-                <Link to={`/profile/${report?.authorId}`}>
-                  <Typography
-                    sx={{
-                      display: 'inline',
+                {report?.authorName && (
+                  <span
+                    style={{
                       color: theme.palette.text.secondary,
                       fontWeight: 500,
                       fontSize: 15,
                       lineHeight: 1.3,
-                      textDecoration: 'none',
                     }}
                   >
-                    {report?.authorName}
-                  </Typography>
-                </Link>
-              </span>
-            )}
-            {report?.createdAt && (
-              <span
-                style={{
-                  color: theme.palette.text.secondary,
-                  fontSize: 13,
-                }}
-              >
-                {utcToDmy(new Date(report?.createdAt || ''))}
-              </span>
-            )}
+                    By{' '}
+                    <Link to={`/profile/${report?.authorId}`}>
+                      <Typography
+                        sx={{
+                          display: 'inline',
+                          color: theme.palette.text.secondary,
+                          fontWeight: 500,
+                          fontSize: 15,
+                          lineHeight: 1.3,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        {report?.authorName}
+                      </Typography>
+                    </Link>
+                  </span>
+                )}
+                {report?.createdAt && (
+                  <span
+                    style={{
+                      color: theme.palette.text.secondary,
+                      fontSize: 13,
+                    }}
+                  >
+                    {utcToDmy(new Date(report?.createdAt || ''))}
+                  </span>
+                )}
+              </Box>
+              <Link to={`/profile/${report?.authorId}`}>
+                <Box
+                  component="img"
+                  src={report?.authorAvatar}
+                  alt="Author Avatar"
+                  sx={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    cursor: 'pointer',
+                  }}
+                />
+              </Link>
+            </Stack>
           </Box>
-          <Link to={`/profile/${report?.authorId}`}>
-            <Box
-              component="img"
-              src={report?.authorAvatar}
-              alt="Author Avatar"
-              sx={{
-                width: '50px',
-                height: '50px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                cursor: 'pointer',
-              }}
-            />
-          </Link>
-        </Stack>
+          <Box
+            sx={{
+              fontSize: 18,
+              lineHeight: 1.6,
+              '& img': {
+                maxWidth: '100%',
+                borderRadius: 4,
+                marginTop: 12,
+                marginBottom: 12,
+              },
+              '& pre': {
+                backgroundColor: theme.palette.grey[900],
+                color: '#fff',
+                padding: 16,
+                borderRadius: 4,
+                overflowX: 'auto',
+              },
+            }}
+          >
+            <ReactMarkdown>{report?.content}</ReactMarkdown>
+          </Box>
+        </Box>
+
+        <Box sx={{ width: { xs: '100%', lg: 380 }, position: { lg: 'sticky' }, top: { lg: 88 } }}>
+          <ReviewerCommentThread comments={comments} reportId={report.id} isSidebar />
+        </Box>
       </Box>
-      <Box
-        sx={{
-          fontSize: 18,
-          lineHeight: 1.6,
-          '& img': {
-            maxWidth: '100%',
-            borderRadius: 4,
-            marginTop: 12,
-            marginBottom: 12,
-          },
-          '& pre': {
-            backgroundColor: theme.palette.grey[900],
-            color: '#fff',
-            padding: 16,
-            borderRadius: 4,
-            overflowX: 'auto',
-          },
-        }}
-      >
-        <ReactMarkdown>{report?.content}</ReactMarkdown>
-      </Box>
-      <ReviewerCommentThread comments={report.reviewerComment} />
     </Box>
   );
 };

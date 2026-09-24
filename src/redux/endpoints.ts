@@ -19,9 +19,12 @@ export const APPROVE_REPORT = `${BASE_URL}/api/reports/approve`;
 export const REQUEST_CHANGES = `${BASE_URL}/api/reports/request-changes`;
 export const PUBLISH_REPORT_FINAL = `${BASE_URL}/api/reports/publish-final`;
 export const ADD_REVIEW_COMMENT = `${BASE_URL}/api/reports/comment`;
+export const ADD_REVIEW_REPLY = `${BASE_URL}/api/reports/comment/reply`;
 
 export const GET_NOTIFICATIONS = `${BASE_URL}/api/notifications`;
 export const GET_UNREAD_COUNT = `${BASE_URL}/api/notifications/unread-count`;
 export const MARK_NOTIFICATION_READ = (id: string) => `${BASE_URL}/api/notifications/${id}/read`;
 export const MARK_ALL_READ = `${BASE_URL}/api/notifications/read-all`;
 export const GET_ORG_MEMBERS = `${BASE_URL}/api/users/org-members`;
+export const GET_ALL_ORG_MEMBERS = `${BASE_URL}/api/users/org-members/all`;
+export const CHANGE_USER_ROLE = (id: string) => `${BASE_URL}/api/users/${id}/role`;

@@ -18,8 +18,11 @@ export const types = {
   REQUEST_CHANGES: 'report/requestChanges',
   PUBLISH_REPORT_FINAL: 'report/publishFinal',
   ADD_REVIEW_COMMENT: 'report/addComment',
+  ADD_REVIEW_REPLY: 'report/addCommentReply',
   GET_NOTIFICATIONS: 'notification/getAll',
   GET_UNREAD_COUNT: 'notification/getUnreadCount',
   MARK_NOTIFICATION_READ: 'notification/markRead',
   MARK_ALL_READ: 'notification/markAllRead',
+  GET_ALL_ORG_MEMBERS: 'orgMembers/getAll',
+  CHANGE_USER_ROLE: 'orgMembers/changeRole',
 };

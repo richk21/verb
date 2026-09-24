@@ -14,6 +14,7 @@ const typeLabel: Record<string, string> = {
   report_approved: 'Approved',
   changes_requested: 'Changes requested',
   report_published: 'Published',
+  role_changed: 'Role updated',
 };
 
 export function NotificationsPage() {
@@ -23,6 +24,7 @@ export function NotificationsPage() {
   const isLoading = useSelector(selectNotificationsLoading);
 
   const handleClick = (n: INotification) => {
+    console.log('Notification clicked:', n);
     if (!n.read) dispatch(NotificationActions.markAsRead({ id: n.id }));
     navigate(n.link);
   };
@@ -37,12 +39,13 @@ export function NotificationsPage() {
         <Typography color="text.secondary">You&apos;re all caught up.</Typography>
       )}
 
-      <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+      <Box sx={{ border: '1px solid', borderColor: 'divider' }}>
         {notifications.map((n, i) => (
           <Box key={n.id}>
             <Box
               onClick={() => handleClick(n)}
               sx={{
+                zIndex: 1,
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',

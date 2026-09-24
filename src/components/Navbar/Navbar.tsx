@@ -1,5 +1,6 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import HomeIcon from '@mui/icons-material/Home';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PostAddIcon from '@mui/icons-material/PostAdd';
@@ -124,6 +125,16 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
               <Badge badgeContent={unreadCount} color="error" max={9}>
                 <NotificationsOutlinedIcon />
               </Badge>
+            </IconButton>
+          )}
+
+          {user?.role === 'admin' && (
+            <IconButton
+              color="inherit"
+              onClick={() => navigate('/org-members')}
+              sx={getNavIconSx(location.pathname === '/org-members', isDark)}
+            >
+              <GroupOutlinedIcon />
             </IconButton>
           )}
 

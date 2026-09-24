@@ -7,14 +7,20 @@ import { Home } from '../pages/Home/Home';
 import { LandingPage } from '../pages/LandingPage/LandingPage';
 import { LoginAndSignUp } from '../pages/LoginAndSignupPage/LoginAndSignUp';
 import { NotificationsPage } from '../pages/NotificationsPage/NotificationsPage';
+import { OrgMembersPage } from '../pages/OrgMembersPage/OrgMembersPage';
 import { PasswordReset } from '../pages/PasswordReset/PasswordReset';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import { ReportView } from '../pages/ReportView/ReportView';
-import { selectUser } from '../redux/user/userSelectors';
+import { selectIsLoading, selectUser } from '../redux/user/userSelectors';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export function AppRoutes() {
   const user = useSelector(selectUser);
+  const isAuthLoading = useSelector(selectIsLoading);
+
+  if (isAuthLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -33,6 +39,7 @@ export function AppRoutes() {
         <Route path="/post-report" element={<CreateOrEditReport />} />
         <Route path="/edit-report/:id" element={<CreateOrEditReport isEditMode />} />
         <Route path="/report/:id" element={<ReportView />} />
+        <Route path="/org-members" element={<OrgMembersPage />} />
       </Route>
     </Routes>
   );
