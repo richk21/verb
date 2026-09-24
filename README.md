@@ -24,6 +24,32 @@ cp .env.example .env   # fill in the values below
 yarn start
 ```
 
+---
+
+## 🐳 Local Containerised Setup (Docker)
+
+This frontend is configured to run inside an optimized Nginx server container, communicating seamlessly with our backend via a shared Docker network.
+
+### Prerequisites
+
+Make sure you have [Docker and Docker Compose](https://docker.com) installed.
+
+### Spin Up the Application Stack
+
+To run the frontend alongside the backend and database services, copy the `docker-compose.yml` file to your root parent directory and run:
+
+```bash
+# Build and run the architecture in the background
+sudo docker compose up -d --build
+
+# Verify all services (mongo, backend, frontend) are running healthy
+sudo docker compose ps
+```
+
+Once running, the frontend user interface will be fully accessible at **http://localhost:3000**.
+
+---
+
 ### Environment variables
 
 | Variable                                                        | Purpose                          |
