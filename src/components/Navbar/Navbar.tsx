@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NotificationActions } from '../../redux/notification/notificationActions';
 import { selectUnreadCount } from '../../redux/notification/notificationSelectors';
+import { UserActions } from '../../redux/user/userActions';
 import { selectUser } from '../../redux/user/userSelectors';
 import { resetAuthToken, resetUser } from '../../redux/user/userSlice';
 import { DropdownWithIcon } from '../DropdownWithIcon/ProfileMenuButton';
@@ -55,6 +56,7 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
 
   const handleLogout = () => {
     Cookies.remove('authToken');
+    dispatch(UserActions.LogoutUser());
     dispatch(resetUser());
     dispatch(resetAuthToken());
     navigate('../');

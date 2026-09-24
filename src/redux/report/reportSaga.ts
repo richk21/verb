@@ -22,6 +22,7 @@ import { IUnsplashRequest } from '../../app/interface/request/unsplashRequest';
 import { ErrorResponse } from '../../app/interface/response/errorResponse';
 import { IUnsplashImagesResponse } from '../../app/interface/response/unsplashImagesResponse';
 import { addAlertToast } from '../alertToast/alertToastSlice';
+import { ReportActions } from './reportActions';
 import { reportService } from './reportService';
 import {
   setAllReports,
@@ -166,16 +167,17 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
     const response: AxiosResponse<boolean> = yield call(reportService.deleteReport, action.payload);
     if (response.status == 200 && response.data == true) {
       yield put(setErrorMessage(null));
-      yield call(getAllUserReports, {
-        type: types.GET_USER_REPORTS,
-        payload: {
+      // Refresh the user's reports list after deletion. Dispatch the standard action
+      // so the watcher handles it and the UI is updated.
+      yield put(
+        ReportActions.getAllUserReports({
           userId,
-          getDrafts: false,
-          getPublished: false,
+          getDrafts: true,
+          getPublished: true,
           page: 1,
           limit: REPORTS_PER_PAGE,
-        },
-      });
+        })
+      );
       yield put(
         addAlertToast({
           message: 'Report deleted.',

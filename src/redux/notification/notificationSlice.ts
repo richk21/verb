@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { INotification } from '../../app/interface/notification';
+import { UserActions } from '../user/userActions';
 
 interface NotificationState {
   notifications: INotification[];
@@ -49,6 +50,9 @@ const notificationSlice = createSlice({
     setNotificationErrorMessage: (state, action: PayloadAction<string | null>) => {
       state.errorMessage = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(UserActions.LogoutUser, () => initialState);
   },
 });
 
