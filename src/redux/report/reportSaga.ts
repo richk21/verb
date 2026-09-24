@@ -165,7 +165,7 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
   const { userId } = action.payload;
   try {
     const response: AxiosResponse<boolean> = yield call(reportService.deleteReport, action.payload);
-    if (response.status == 200 && response.data == true) {
+    if (response.status == 200) {
       yield put(setErrorMessage(null));
       // Clear the current user's reports immediately so the UI reflects
       // deletion, then re-fetch the list for page 1.
