@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import LoadingOverlay from '../components/LoadingOverlay/LoadingOverlay';
 import { Login } from '../components/Login/Login';
 import { Signup } from '../components/Signup/Signup';
 import { CreateOrEditReport } from '../pages/CreateReport/CreateReport';
@@ -19,7 +20,7 @@ export function AppRoutes() {
   const isAuthLoading = useSelector(selectIsLoading);
 
   if (isAuthLoading) {
-    return <div>Loading...</div>;
+    return <LoadingOverlay />;
   }
 
   return (
