@@ -63,7 +63,10 @@ export function Navbar({ isDark, onToggleTheme }: NavbarProps) {
   };
 
   useEffect(() => {
-    if (user) dispatch(NotificationActions.getUnreadCount());
+    if (user) {
+      dispatch(NotificationActions.getUnreadCount());
+      dispatch(NotificationActions.getNotifications({ page: 1 }));
+    }
   }, [user, dispatch, location.pathname]);
 
   const logoColor = isDark ? '#fff' : '#000';

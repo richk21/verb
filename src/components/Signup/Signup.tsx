@@ -290,7 +290,10 @@ export function Signup() {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 dispatch(
-                  UserActions.GoogleAuthUser({ token: credentialResponse.credential || '' })
+                  UserActions.GoogleAuthUser({
+                    token: credentialResponse.credential || '',
+                    organizationName: organizationName,
+                  })
                 );
               }}
               theme="outline"

@@ -167,8 +167,10 @@ export function* deleteReport(action: { type: string; payload: IReportDeleteRequ
     const response: AxiosResponse<boolean> = yield call(reportService.deleteReport, action.payload);
     if (response.status == 200 && response.data == true) {
       yield put(setErrorMessage(null));
-      // Refresh the user's reports list after deletion. Dispatch the standard action
-      // so the watcher handles it and the UI is updated.
+      // Clear the current user's reports immediately so the UI reflects
+      // deletion, then re-fetch the list for page 1.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      yield put(setAllUserReports([] as any));
       yield put(
         ReportActions.getAllUserReports({
           userId,
